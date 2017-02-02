@@ -6,6 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 /**
  * Created by gunnaringi on 2017-02-01.
@@ -13,10 +16,11 @@ import android.widget.ImageView;
 
 public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterAdapterViewHolder> {
 
+    private String[] movieTitles;
     private final PosterAdapterOnClickHandler mClickHandler;
 
     public interface PosterAdapterOnClickHandler {
-        void onClick();
+        void onClick(String movieClicked);
     }
 
     public PosterAdapter(PosterAdapterOnClickHandler clickHandler){
@@ -27,15 +31,19 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterAdap
             implements View.OnClickListener {
 
         public final ImageView mPosterImageView;
+        public final TextView mPosterTextView;
 
         public PosterAdapterViewHolder(View view) {
             super(view);
             mPosterImageView = (ImageView) view.findViewById(R.id.poster_image);
+            mPosterTextView = (TextView) view.findViewById(R.id.movie_poster_title);
         }
 
         @Override
         public void onClick(View v) {
             int adapterPosition = getAdapterPosition();
+            String movieClicked = movieTitles[adapterPosition];
+            mClickHandler.onClick(movieClicked);
         }
     }
 
@@ -52,13 +60,19 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterAdap
 
     @Override
     public void onBindViewHolder(PosterAdapterViewHolder posterAdapterViewHolder, int position) {
+        String thisMovieTitle = movieTitles[position];
         posterAdapterViewHolder.mPosterImageView.setImageResource(R.drawable.android_icon);
+        posterAdapterViewHolder.mPosterTextView.setText(thisMovieTitle);
     }
 
     @Override
     public int getItemCount() {
-        /* TODO : Make dummy data with an array of movie titles to connect with each poster
-            to get a limited number of elements.
-        */
+        if (movieTitles == null) return 0;
+        return movieTitles.length;
+    }
+
+    public void setMovieData(String[] titles) {
+        movieTitles = titles;
+        notifyDataSetChanged();
     }
 }
