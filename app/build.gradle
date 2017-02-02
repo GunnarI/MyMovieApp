@@ -16,6 +16,10 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+
+        buildTypes.each {
+            it.buildConfigField "String", "TMDB_API_KEY", getMyApiKey("myApiKey")
+        }
     }
 }
 
@@ -35,4 +39,10 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:25.1.1'
     testCompile 'junit:junit:4.12'
+}
+
+def getMyApiKey(String property) {
+    Properties properties = new Properties()
+    properties.load(new FileInputStream("/home/gunnaringi/AndroidApps/TMDB_API"))
+    return "\"" + properties.getProperty(property) + "\""
 }

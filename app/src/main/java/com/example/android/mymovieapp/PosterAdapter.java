@@ -10,13 +10,15 @@ import android.widget.TextView;
 
 import org.w3c.dom.Text;
 
+import java.util.ArrayList;
+
 /**
  * Created by gunnaringi on 2017-02-01.
  */
 
 public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterAdapterViewHolder> {
 
-    private String[] movieTitles;
+    private ArrayList<MovieData> mMoviesData;
     private final PosterAdapterOnClickHandler mClickHandler;
 
     public interface PosterAdapterOnClickHandler {
@@ -42,7 +44,7 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterAdap
         @Override
         public void onClick(View v) {
             int adapterPosition = getAdapterPosition();
-            String movieClicked = movieTitles[adapterPosition];
+            String movieClicked = mMoviesData.get(adapterPosition).getTitle();
             mClickHandler.onClick(movieClicked);
         }
     }
@@ -60,19 +62,20 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterAdap
 
     @Override
     public void onBindViewHolder(PosterAdapterViewHolder posterAdapterViewHolder, int position) {
-        String thisMovieTitle = movieTitles[position];
+        String thisMovieTitle = mMoviesData.get(position).getTitle();
         posterAdapterViewHolder.mPosterImageView.setImageResource(R.drawable.android_icon);
         posterAdapterViewHolder.mPosterTextView.setText(thisMovieTitle);
     }
 
     @Override
     public int getItemCount() {
-        if (movieTitles == null) return 0;
-        return movieTitles.length;
+        if (mMoviesData == null) return 0;
+        return mMoviesData.size();
     }
 
-    public void setMovieData(String[] titles) {
-        movieTitles = titles;
+    public void setMovieData(ArrayList<MovieData> moviesData) {
+        //movieTitles = titles;
+        mMoviesData = new ArrayList(moviesData);
         notifyDataSetChanged();
     }
 }
