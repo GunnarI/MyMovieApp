@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
 
@@ -33,12 +34,12 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterAdap
             implements View.OnClickListener {
 
         public final ImageView mPosterImageView;
-        public final TextView mPosterTextView;
+        //public final TextView mPosterTextView;
 
         public PosterAdapterViewHolder(View view) {
             super(view);
             mPosterImageView = (ImageView) view.findViewById(R.id.poster_image);
-            mPosterTextView = (TextView) view.findViewById(R.id.movie_poster_title);
+            //mPosterTextView = (TextView) view.findViewById(R.id.movie_poster_title);
         }
 
         @Override
@@ -62,9 +63,10 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterAdap
 
     @Override
     public void onBindViewHolder(PosterAdapterViewHolder posterAdapterViewHolder, int position) {
-        String thisMovieTitle = mMoviesData.get(position).getTitle();
-        posterAdapterViewHolder.mPosterImageView.setImageResource(R.drawable.android_icon);
-        posterAdapterViewHolder.mPosterTextView.setText(thisMovieTitle);
+        //String thisMovieTitle = mMoviesData.get(position).getTitle();
+        String url = "http://image.tmdb.org/t/p/w500" + mMoviesData.get(position).getImgUrl();
+        Picasso.with((Context) mClickHandler).load(url).into(posterAdapterViewHolder.mPosterImageView);//.setImageResource(R.drawable.android_icon);
+        //posterAdapterViewHolder.mPosterTextView.setText(thisMovieTitle);
     }
 
     @Override

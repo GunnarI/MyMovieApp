@@ -43,6 +43,6 @@ dependencies {
 
 def getMyApiKey(String property) {
     Properties properties = new Properties()
-    properties.load(new FileInputStream("/home/gunnaringi/AndroidApps/TMDB_API"))
+    properties.load(new FileInputStream("../TMDB_API.txt"))
     return "\"" + properties.getProperty(property) + "\""
 }
