@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">MyMovieApp</string>
+
+    <string name="settings_title">Settings</string>
+
+    <string name="orderby_title">Order By</string>
+    <string name="orderby_key" translatable="false">orderby</string>
+    <string name="pref_orderby_rate">0</string>
+    <string name="pref_orderby_pop">1</string>
 </resources>
