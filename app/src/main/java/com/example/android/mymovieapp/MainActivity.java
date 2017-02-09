@@ -15,6 +15,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,14 +30,18 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
+import com.example.android.mymovieapp.PosterAdapter.PosterAdapterOnClickHandler;
+
 public class MainActivity extends AppCompatActivity
-        implements PosterAdapter.PosterAdapterOnClickHandler {
+        implements PosterAdapterOnClickHandler {
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
 
     private RecyclerView mRecyclerView;
-    private int spanCount = 2; // TODO : Check how it's best to implement the spancount
+    private int spanCount = 2;
     private PosterAdapter mPosterAdapter;
+    private ProgressBar mLoadingIndicator;
+    private TextView mErrorMessageDisplay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +57,9 @@ public class MainActivity extends AppCompatActivity
 
         mPosterAdapter = new PosterAdapter(this);
         mRecyclerView.setAdapter(mPosterAdapter);
+
+        mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
+        mErrorMessageDisplay = (TextView) findViewById(R.id.poster_error_message_display);
 
         loadMovieData();
     }
@@ -68,8 +77,6 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.action_settings) {
             startActivityForResult(new Intent(this, SettingsActivity.class), 1001);
-            //loadMovieData();
-            //recreate();
         }
 
         return super.onOptionsItemSelected(item);
@@ -95,20 +102,32 @@ public class MainActivity extends AppCompatActivity
         } else if (orderby.equals(getString(R.string.pref_orderby_pop))) {
             orderby = "popular";
         }
-        Log.i(LOG_TAG, orderby);
         showMoviePosterView();
         new FetchMoviesTask().execute(orderby);
     }
 
+    @Override
+    public void onClick(MovieData movieClicked) {
+        Context context = this;
+        Class destinationClass = DetailActivity.class;
+
+        Intent detailIntent = new Intent(context, destinationClass);
+        detailIntent.putExtra("MovieDetail",movieClicked);
+        startActivity(detailIntent);
+    }
+
     private void showMoviePosterView() {
+        /* First, make sure the error is invisible */
+        mErrorMessageDisplay.setVisibility(View.INVISIBLE);
+        /* Then, make sure the weather data is visible */
         mRecyclerView.setVisibility(View.VISIBLE);
     }
 
-    @Override
-    public void onClick(String movieClicked) {
-        // TODO: put intent with movie title as extra info to setup the detailed view
-        Context context = this;
-        Class destinationClass = DetailActivity.class;
+    private void showErrorMessage() {
+        /* First, hide the currently visible data */
+        mRecyclerView.setVisibility(View.INVISIBLE);
+        /* Then, show the error */
+        mErrorMessageDisplay.setVisibility(View.VISIBLE);
     }
 
     public class FetchMoviesTask extends AsyncTask<String, Void, ArrayList<MovieData>> {
@@ -143,6 +162,12 @@ public class MainActivity extends AppCompatActivity
             }
 
             return movieDatas;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            mLoadingIndicator.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -209,9 +234,13 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         protected void onPostExecute(ArrayList<MovieData> result) {
+            mLoadingIndicator.setVisibility(View.INVISIBLE);
             if (result != null) {
+                showMoviePosterView();
                 mPosterAdapter.setMovieData(result);
                 mPosterAdapter.notifyDataSetChanged();
+            } else {
+                showErrorMessage();
             }
         }
     }

@@ -6,10 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 import com.squareup.picasso.Picasso;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -23,7 +20,7 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterAdap
     private final PosterAdapterOnClickHandler mClickHandler;
 
     public interface PosterAdapterOnClickHandler {
-        void onClick(String movieClicked);
+        void onClick(MovieData movieClicked);
     }
 
     public PosterAdapter(PosterAdapterOnClickHandler clickHandler){
@@ -38,12 +35,13 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterAdap
         public PosterAdapterViewHolder(View view) {
             super(view);
             mPosterImageView = (ImageView) view.findViewById(R.id.poster_image);
+            view.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
             int adapterPosition = getAdapterPosition();
-            String movieClicked = mMoviesData.get(adapterPosition).getTitle();
+            MovieData movieClicked = mMoviesData.get(adapterPosition);
             mClickHandler.onClick(movieClicked);
         }
     }
