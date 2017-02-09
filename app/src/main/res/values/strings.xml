@@ -7,4 +7,15 @@
     <string name="orderby_key" translatable="false">orderby</string>
     <string name="pref_orderby_rate">0</string>
     <string name="pref_orderby_pop">1</string>
+
+    <string name="error_message">
+        An error has occurred. Please check the internet connection and refresh.
+    </string>
+
+    <string name="default_detailed_title_text" translatable="false">
+        Movie title default text to setup view
+    </string>
+    <string name="rel_date_header">Release date</string>
+    <string name="rating_header">Rating</string>
+    <string name="desc_header">Plot synopsis</string>
 </resources>

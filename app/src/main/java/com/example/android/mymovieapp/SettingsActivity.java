@@ -1,17 +1,11 @@
 package com.example.android.mymovieapp;
 
-        import android.app.Activity;
-        import android.app.Application;
-        import android.content.Intent;
-        import android.os.Bundle;
-        import android.preference.ListPreference;
-        import android.preference.Preference;
-        import android.preference.PreferenceActivity;
-        import android.preference.PreferenceFragment;
-        import android.preference.PreferenceManager;
-        import android.content.SharedPreferences;
-        import android.util.Log;
-        import android.view.KeyEvent;
+import android.app.Activity;
+import android.os.Bundle;
+import android.preference.PreferenceActivity;
+import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
+import android.content.SharedPreferences;
 
 /**
  * Created by gunnaringi on 2017-02-07.
