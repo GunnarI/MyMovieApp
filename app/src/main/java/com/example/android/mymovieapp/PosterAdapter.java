@@ -34,12 +34,10 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterAdap
             implements View.OnClickListener {
 
         public final ImageView mPosterImageView;
-        //public final TextView mPosterTextView;
 
         public PosterAdapterViewHolder(View view) {
             super(view);
             mPosterImageView = (ImageView) view.findViewById(R.id.poster_image);
-            //mPosterTextView = (TextView) view.findViewById(R.id.movie_poster_title);
         }
 
         @Override
@@ -63,10 +61,8 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterAdap
 
     @Override
     public void onBindViewHolder(PosterAdapterViewHolder posterAdapterViewHolder, int position) {
-        //String thisMovieTitle = mMoviesData.get(position).getTitle();
         String url = "http://image.tmdb.org/t/p/w500" + mMoviesData.get(position).getImgUrl();
-        Picasso.with((Context) mClickHandler).load(url).into(posterAdapterViewHolder.mPosterImageView);//.setImageResource(R.drawable.android_icon);
-        //posterAdapterViewHolder.mPosterTextView.setText(thisMovieTitle);
+        Picasso.with((Context) mClickHandler).load(url).into(posterAdapterViewHolder.mPosterImageView);
     }
 
     @Override
@@ -76,7 +72,6 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterAdap
     }
 
     public void setMovieData(ArrayList<MovieData> moviesData) {
-        //movieTitles = titles;
         mMoviesData = new ArrayList(moviesData);
         notifyDataSetChanged();
     }

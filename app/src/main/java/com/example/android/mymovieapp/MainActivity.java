@@ -1,12 +1,19 @@
 package com.example.android.mymovieapp;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 
 import org.json.JSONArray;
@@ -33,6 +40,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_movie);
@@ -47,10 +55,49 @@ public class MainActivity extends AppCompatActivity
         loadMovieData();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_settings) {
+            startActivityForResult(new Intent(this, SettingsActivity.class), 1001);
+            //loadMovieData();
+            //recreate();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 1001) {
+            if(resultCode == Activity.RESULT_OK) {
+                loadMovieData();
+            }
+        }
+    }
+
     private void loadMovieData() {
+        SharedPreferences prefsLoc = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        String orderby = prefsLoc.getString(
+                getString(R.string.orderby_key),
+                getString(R.string.pref_orderby_pop));
+
+        if (orderby.equals(getString(R.string.pref_orderby_rate))) {
+            orderby = "top_rated";
+        } else if (orderby.equals(getString(R.string.pref_orderby_pop))) {
+            orderby = "popular";
+        }
+        Log.i(LOG_TAG, orderby);
         showMoviePosterView();
-        //setMovieDummyDataToAdapter();
-        new FetchMoviesTask().execute("popular");
+        new FetchMoviesTask().execute(orderby);
     }
 
     private void showMoviePosterView() {
