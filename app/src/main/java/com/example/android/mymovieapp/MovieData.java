@@ -1,18 +1,32 @@
 package com.example.android.mymovieapp;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.io.Serializable;
 
 /**
  * Created by gunnaringi on 2017-02-02.
  */
 
-public class MovieData implements Serializable {
+class MovieData implements Parcelable {
     private String imgUrl;
     private String title;
     private String overview;
     private String rating;
     private String relDate;
     private String id;
+
+    public MovieData(String imgUrl, String title, String overview,
+                     String rating, String relDate, String id)
+    {
+        this.imgUrl = imgUrl;
+        this.title = title;
+        this.overview = overview;
+        this.rating = rating;
+        this.relDate = relDate;
+        this.id = id;
+    }
 
     //Getters
     public String getImgUrl() { return imgUrl; }
@@ -44,4 +58,44 @@ public class MovieData implements Serializable {
     }
 
     public void setId(String id) { this.id = id; }
+
+    public MovieData(Parcel in){
+        String[] data = new String[6];
+
+        in.readStringArray(data);
+
+        this.imgUrl = data[0];
+        this.title = data[1];
+        this.overview = data[2];
+        this.rating = data[3];
+        this.relDate = data[4];
+        this.id = data[5];
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeStringArray(new String[] {
+                this.imgUrl,
+                this.title,
+                this.overview,
+                this.rating,
+                this.relDate,
+                this.id
+        });
+    }
+
+    @Override
+    public int describeContents(){
+        return 0;
+    }
+
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        public MovieData createFromParcel(Parcel in) {
+            return new MovieData(in);
+        }
+
+        public MovieData[] newArray(int size) {
+            return new MovieData[size];
+        }
+    };
 }

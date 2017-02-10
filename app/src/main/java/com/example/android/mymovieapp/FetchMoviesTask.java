@@ -57,15 +57,16 @@ public class FetchMoviesTask extends AsyncTask<String, Void, ArrayList<MovieData
         JSONObject movieJson = new JSONObject(movieJsonStr);
         JSONArray movieArray = movieJson.getJSONArray(FILM_LIST);
 
-        ArrayList<MovieData> movieDatas = new ArrayList<MovieData>();
+        ArrayList<MovieData> movieDatas = new ArrayList<>();
         for(int i=0; i < movieArray.length(); i++) {
-            MovieData movieData = new MovieData();
-            movieData.setImgUrl(movieArray.getJSONObject(i).getString(FILM_POSTER));
-            movieData.setTitle(movieArray.getJSONObject(i).getString(FILM_TITLE));
-            movieData.setOverview(movieArray.getJSONObject(i).getString(FILM_DESC));
-            movieData.setRating(movieArray.getJSONObject(i).getString(FILM_RATING));
-            movieData.setRelDate(movieArray.getJSONObject(i).getString(FILM_RELEASE_DATE));
-            movieData.setId(movieArray.getJSONObject(i).getString(FILM_ID));
+            MovieData movieData = new MovieData(
+                    movieArray.getJSONObject(i).getString(FILM_POSTER),
+                    movieArray.getJSONObject(i).getString(FILM_TITLE),
+                    movieArray.getJSONObject(i).getString(FILM_DESC),
+                    movieArray.getJSONObject(i).getString(FILM_RATING),
+                    movieArray.getJSONObject(i).getString(FILM_RELEASE_DATE),
+                    movieArray.getJSONObject(i).getString(FILM_ID)
+            );
 
             movieDatas.add(movieData);
         }
