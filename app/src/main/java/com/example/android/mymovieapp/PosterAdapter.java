@@ -60,7 +60,10 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterAdap
     @Override
     public void onBindViewHolder(PosterAdapterViewHolder posterAdapterViewHolder, int position) {
         String url = "http://image.tmdb.org/t/p/w500" + mMoviesData.get(position).getImgUrl();
-        Picasso.with((Context) mClickHandler).load(url).into(posterAdapterViewHolder.mPosterImageView);
+        Picasso.with((Context) mClickHandler)
+                .load(url)
+                .placeholder(R.drawable.imagenotfound_icon)
+                .into(posterAdapterViewHolder.mPosterImageView);
     }
 
     @Override
