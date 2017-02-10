@@ -36,11 +36,12 @@ public class DetailActivity extends AppCompatActivity {
 
         if (intentThatStartedThisActivity != null) {
             if (intentThatStartedThisActivity.hasExtra("MovieDetail")) {
-                mMovieData = (MovieData) intentThatStartedThisActivity.getSerializableExtra("MovieDetail");
+                mMovieData = (MovieData) intentThatStartedThisActivity
+                        .getParcelableExtra("MovieDetail");
+
                 mMovieTitle.setText(mMovieData.getTitle());
                 Picasso.with(this)
                         .load("http://image.tmdb.org/t/p/w342" + mMovieData.getImgUrl())
-                        .placeholder(R.drawable.imagenotfound_icon)
                         .into(mMovieThumbnail);
                 mMovieDate.setText(mMovieData.getRelDate());
                 mMovieRating.setText(mMovieData.getRating());
