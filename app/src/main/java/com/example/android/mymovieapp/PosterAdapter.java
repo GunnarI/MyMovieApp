@@ -18,6 +18,9 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterAdap
 
     private ArrayList<MovieData> mMoviesData;
     private final PosterAdapterOnClickHandler mClickHandler;
+    private final String[] posterSizes = new String[]{
+            "w92", "w154", "w185", "w342", "w500", "w780", "original"
+    };
 
     public interface PosterAdapterOnClickHandler {
         void onClick(MovieData movieClicked);
@@ -59,7 +62,9 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterAdap
 
     @Override
     public void onBindViewHolder(PosterAdapterViewHolder posterAdapterViewHolder, int position) {
-        String url = "http://image.tmdb.org/t/p/w500" + mMoviesData.get(position).getImgUrl();
+        String url = "http://image.tmdb.org/t/p/"
+                + posterSizes[4]
+                + mMoviesData.get(position).getImgUrl();
         Picasso.with((Context) mClickHandler)
                 .load(url)
                 .placeholder(R.drawable.imagenotfound_icon)

@@ -6,42 +6,46 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.content.SharedPreferences;
+import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceFragmentCompat;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 /**
  * Created by gunnaringi on 2017-02-07.
  */
 
-public class SettingsActivity extends PreferenceActivity
-        implements SharedPreferences.OnSharedPreferenceChangeListener {
-
-    private final String LOG_TAG = MainActivity.class.getSimpleName();
+public class SettingsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_settings);
+        ActionBar actionBar = this.getSupportActionBar();
 
-        getFragmentManager().beginTransaction()
-                .replace(android.R.id.content, new SettingsFragment())
-                .commit();
-
-
-        PreferenceManager.getDefaultSharedPreferences(this)
-                .registerOnSharedPreferenceChangeListener(this);
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
     }
 
-    public static class SettingsFragment extends PreferenceFragment
+    public static class SettingsFragment extends PreferenceFragmentCompat
     {
         @Override
-        public void onCreate(final Bundle savedInstanceState)
+        public void onCreatePreferences(Bundle bundle, String s)
         {
-            super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_general);
         }
     }
 
     @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        setResult(Activity.RESULT_OK);
-        finish();
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == android.R.id.home) {
+            NavUtils.navigateUpFromSameTask(this);
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
