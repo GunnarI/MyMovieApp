@@ -1,8 +1,12 @@
 package com.example.android.mymovieapp;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -25,63 +29,34 @@ import java.util.ArrayList;
  * Created by gunnaringi on 2017-02-10.
  */
 
-public class FetchMoviesTask extends AsyncTask<String, Void, ArrayList<MovieData>> {
+public class FetchMoviesTask extends AsyncTaskLoader<ArrayList<MovieData>> {
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
 
-    private Context context;
-    private AsyncTaskCompleteListener<ArrayList<MovieData>> listener;
+    ArrayList<MovieData> mMovieData = null;
     private ProgressBar mLoadingIndicator;
+    private Context context;
+    private String orderby;
 
-    public FetchMoviesTask(Context context,
-                           AsyncTaskCompleteListener<ArrayList<MovieData>> listener,
-                           ProgressBar mLoadingIndicator)
-    {
+    public FetchMoviesTask(Context context, ProgressBar mLoadingIndicator, String orderby) {
+        super(context);
         this.context = context;
-        this.listener = listener;
         this.mLoadingIndicator = mLoadingIndicator;
+        this.orderby = orderby;
     }
 
-    private ArrayList<MovieData> getMovieDataFromJson(String movieJsonStr) throws JSONException {
-        // Things to get from TMDb:
-        final String FILM_LIST = "results";
-        final String FILM_POSTER = "poster_path";
-        final String FILM_DESC = "overview";
-        final String FILM_RELEASE_DATE = "release_date";
-        final String FILM_GENRE = "genre_ids";
-        final String FILM_TITLE = "title";
-        final String FILM_POPULAR_GRADE = "popularity";
-        final String FILM_RATING = "vote_average";
-        final String FILM_ID = "id";
-
-        JSONObject movieJson = new JSONObject(movieJsonStr);
-        JSONArray movieArray = movieJson.getJSONArray(FILM_LIST);
-
-        ArrayList<MovieData> movieDatas = new ArrayList<>();
-        for(int i=0; i < movieArray.length(); i++) {
-            MovieData movieData = new MovieData(
-                    movieArray.getJSONObject(i).getString(FILM_POSTER),
-                    movieArray.getJSONObject(i).getString(FILM_TITLE),
-                    movieArray.getJSONObject(i).getString(FILM_DESC),
-                    movieArray.getJSONObject(i).getString(FILM_RATING),
-                    movieArray.getJSONObject(i).getString(FILM_RELEASE_DATE),
-                    movieArray.getJSONObject(i).getString(FILM_ID)
-            );
-
-            movieDatas.add(movieData);
+    @Override
+    protected void onStartLoading() {
+        if (mMovieData != null) {
+            deliverResult(mMovieData);
+        } else {
+            mLoadingIndicator.setVisibility(View.VISIBLE);
+            forceLoad();
         }
-
-        return movieDatas;
     }
 
     @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        mLoadingIndicator.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    protected ArrayList<MovieData> doInBackground(String... params) {
+    public ArrayList<MovieData> loadInBackground() {
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
 
@@ -91,7 +66,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, ArrayList<MovieData
             final String FILM_BASE_URL = "http://api.themoviedb.org/3/movie/";
 
             Uri builtUri = Uri.parse(FILM_BASE_URL).buildUpon()
-                    .appendPath(params[0])
+                    .appendPath(orderby)
                     .appendQueryParameter("api_key", BuildConfig.TMDB_API_KEY)
                     .build();
 
@@ -145,9 +120,40 @@ public class FetchMoviesTask extends AsyncTask<String, Void, ArrayList<MovieData
     }
 
     @Override
-    protected void onPostExecute(ArrayList<MovieData> result) {
-        super.onPostExecute(result);
-        listener.onTaskComplete(result);
-        mLoadingIndicator.setVisibility(View.INVISIBLE);
+    public void deliverResult(ArrayList<MovieData> data) {
+        mMovieData = data;
+        super.deliverResult(data);
+    }
+
+    private ArrayList<MovieData> getMovieDataFromJson(String movieJsonStr) throws JSONException {
+        // Things to get from TMDb:
+        final String FILM_LIST = "results";
+        final String FILM_POSTER = "poster_path";
+        final String FILM_DESC = "overview";
+        final String FILM_RELEASE_DATE = "release_date";
+        final String FILM_GENRE = "genre_ids";
+        final String FILM_TITLE = "title";
+        final String FILM_POPULAR_GRADE = "popularity";
+        final String FILM_RATING = "vote_average";
+        final String FILM_ID = "id";
+
+        JSONObject movieJson = new JSONObject(movieJsonStr);
+        JSONArray movieArray = movieJson.getJSONArray(FILM_LIST);
+
+        ArrayList<MovieData> movieDatas = new ArrayList<>();
+        for(int i=0; i < movieArray.length(); i++) {
+            MovieData movieData = new MovieData(
+                    movieArray.getJSONObject(i).getString(FILM_POSTER),
+                    movieArray.getJSONObject(i).getString(FILM_TITLE),
+                    movieArray.getJSONObject(i).getString(FILM_DESC),
+                    movieArray.getJSONObject(i).getString(FILM_RATING),
+                    movieArray.getJSONObject(i).getString(FILM_RELEASE_DATE),
+                    movieArray.getJSONObject(i).getString(FILM_ID)
+            );
+
+            movieDatas.add(movieData);
+        }
+
+        return movieDatas;
     }
 }
