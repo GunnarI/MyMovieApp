@@ -66,6 +66,8 @@ public class FetchMoviesTask extends AsyncTaskLoader<ArrayList<MovieData>> {
 
             URL url = new URL(builtUri.toString());
 
+            Log.i(LOG_TAG, builtUri.toString());
+
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
             urlConnection.connect();

@@ -34,6 +34,10 @@ class MovieData implements Parcelable {
     public String getOverview() { return overview; }
     public String getRating() { return rating; }
     public String getRelDate() { return relDate; }
+    public String getRelYear() {
+        String[] partedDate = relDate.split("-");
+        return partedDate[0];
+    }
     public String getId() { return id; }
 
     //Setters
