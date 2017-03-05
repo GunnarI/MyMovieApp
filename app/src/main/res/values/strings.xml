@@ -19,9 +19,14 @@
     <string name="movie_runtime_mockup" translatable="false">120min</string>
     <string name="button_reviews">Reviews</string>
 
-    <string name="plot_summary_mockup" translatable="false">
+    <string name="lorum_ipsum_mockup" translatable="false">
         Lorem ipsum dolor sit amet, gravida pellentesque nulla suscipit, quidem dolor sit facilisis, quis non molestie wisi quam pellentesque, turpis morbi justo sollicitudin morbi ipsum. Ut elementum sed condimentum, vivamus nec quis nunc urna, sit dictum ante duis nisl orci dui, vitae suspendisse nec congue ante mauris lacus, ultricies ligula. Vel arcu etiam sem quisque eros luctus, in ligula velit nec, vitae cursus massa iaculis, aliquam blandit blandit pede. Eu mattis porttitor nec ridiculus consequatur mi, et vivamus, quam dolor maecenas nisl eu, et tempor risus, eget massa sem suscipit. Nullam fermentum sociis vestibulum quis congue ut, sed neque aenean mattis. Diam metus rutrum tellus pulvinar vel, vitae quam. Varius dignissim magna, mi duis convallis, ipsum molestie ac, massa ut lacinia lorem leo luctus. Odio mauris volutpat.
     </string>
 
-    <string name="trailer_title">Trailers:</string>
+    <string name="trailer_header">Trailers:</string>
+    <string name="trailer_title_mockup" translatable="false">Default trailer title to be put here</string>
+
+    <string name="by_author">By</string>
+    <string name="review_author_mockup" translatable="false">thisisamockupauthorname</string>
+
 </resources>

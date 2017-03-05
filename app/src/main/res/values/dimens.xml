@@ -10,28 +10,35 @@
 
     <dimen name="negative_spacing_size">40dp</dimen>
 
+    <!-- Detail view movie poster thumbnail -->
     <dimen name="movie_icon_top_margin">120dp</dimen>
     <dimen name="movie_icon_width">150dp</dimen>
     <dimen name="movie_icon_height">220dp</dimen>
     <dimen name="movie_icon_left_margin">24dp</dimen>
 
+    <!-- Detail view star icon sizes -->
     <dimen name="star_icon_dim">20dp</dimen>
     <dimen name="star_icon_spacing">4dp</dimen>
 
+    <!-- General spacing sizes -->
     <dimen name="view_spacing_vertical_1">32dp</dimen>
     <dimen name="view_spacing_vertical_2">16dp</dimen>
     <dimen name="view_spacing_vertical_3">8dp</dimen>
     <dimen name="view_spacing_vertical_4">4dp</dimen>
     <dimen name="view_spacing_horizontal_1">16dp</dimen>
 
+    <!-- Divider sizes -->
     <dimen name="divider_horizontal_spacing">24dp</dimen>
     <dimen name="divider_vertical_spacing">8dp</dimen>
     <dimen name="divider_height">2dp</dimen>
 
-<!-- Old settings -->
+    <!-- Text sizes -->
     <dimen name="text_size_huge">36sp</dimen>
     <dimen name="text_size_large">24sp</dimen>
     <dimen name="text_size_medium">18sp</dimen>
+    <dimen name="text_size_small">14sp</dimen>
+
+<!-- Old settings -->
 
     <dimen name="padding_err_message">16dp</dimen>
     <dimen name="padding_horizontal_1">30dp</dimen>

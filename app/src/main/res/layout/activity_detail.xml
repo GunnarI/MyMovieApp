@@ -25,10 +25,7 @@
                 android:gravity="center_vertical"
                 android:background="@color/colorPrimaryDark"
                 android:textColor="@color/colorWhite"
-                android:paddingTop="@dimen/detail_title_padding"
-                android:paddingLeft="@dimen/detail_title_padding"
-                android:paddingRight="@dimen/detail_title_padding"
-                android:paddingBottom="@dimen/detail_title_padding"
+                android:padding="@dimen/detail_title_padding"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent" />
@@ -125,7 +122,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/star_icon_1" />
             <TextView
                 android:id="@+id/movie_description"
-                tools:text="@string/plot_summary_mockup"
+                tools:text="@string/lorum_ipsum_mockup"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/view_spacing_vertical_2"
@@ -144,14 +141,16 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/movie_description"
+                android:layout_marginLeft="@dimen/divider_horizontal_spacing"
+                android:layout_marginStart="@dimen/divider_horizontal_spacing"
                 android:layout_marginRight="@dimen/divider_horizontal_spacing"
                 android:layout_marginTop="@dimen/divider_vertical_spacing"
                 android:layout_marginEnd="@dimen/divider_horizontal_spacing" />
             <TextView
-                android:id="@+id/trailer_title"
+                android:id="@+id/trailer_header"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/trailer_title"
+                android:text="@string/trailer_header"
                 android:textSize="@dimen/text_size_medium"
                 android:textColor="@color/colorBlack"
                 app:layout_constraintTop_toBottomOf="@+id/divider"
@@ -159,14 +158,14 @@
                 android:layout_marginTop="@dimen/divider_vertical_spacing"
                 tools:layout_editor_absoluteX="16dp" />
             <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerview_trailers"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/trailer_title"
+                app:layout_constraintTop_toBottomOf="@id/trailer_header"
                 app:layout_constraintStart_toStartOf="parent"
                 android:paddingTop="@dimen/view_spacing_vertical_3"
-                android:paddingLeft="@dimen/activity_horizontal_margin">
-
-            </android.support.v7.widget.RecyclerView>
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin" />
         </android.support.constraint.ConstraintLayout>
     </ScrollView>
 

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="50dp">
+
+    <ImageView
+        android:id="@+id/trailer_thumbnail"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:srcCompat="@drawable/play_button"
+        android:padding="@dimen/view_spacing_vertical_3"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"/>
+    <TextView
+        android:id="@+id/trailer_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="@string/default_detailed_title_text"
+        android:textSize="@dimen/text_size_medium"
+        android:textColor="@color/colorBlack"
+        android:layout_gravity="center"
+        android:paddingLeft="@dimen/view_spacing_horizontal_1"/>
+</LinearLayout>
