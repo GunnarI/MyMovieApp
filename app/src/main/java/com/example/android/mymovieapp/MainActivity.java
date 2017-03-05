@@ -1,6 +1,5 @@
 package com.example.android.mymovieapp;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,11 +8,9 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -24,7 +21,6 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import com.example.android.mymovieapp.PosterAdapter.PosterAdapterOnClickHandler;
-import com.example.android.mymovieapp.utilities.AsyncTaskCompleteListener;
 
 public class MainActivity extends AppCompatActivity implements
         PosterAdapterOnClickHandler,
@@ -98,7 +94,6 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals(getString(R.string.orderby_key))) {
-            loadMovieData();
             int loaderId = POSTER_LOADER_ID;
 
             getSupportLoaderManager().restartLoader(loaderId, null, this);

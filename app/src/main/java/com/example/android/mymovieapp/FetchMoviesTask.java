@@ -1,17 +1,11 @@
 package com.example.android.mymovieapp;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.preference.PreferenceManager;
-import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
-
-import com.example.android.mymovieapp.utilities.AsyncTaskCompleteListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -71,6 +65,8 @@ public class FetchMoviesTask extends AsyncTaskLoader<ArrayList<MovieData>> {
                     .build();
 
             URL url = new URL(builtUri.toString());
+
+            Log.i(LOG_TAG, builtUri.toString());
 
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
