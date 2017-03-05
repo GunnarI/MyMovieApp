@@ -11,6 +11,7 @@
     <string name="error_message">
         An error has occurred. Please check the internet connection and refresh.
     </string>
+    <string name="error_message_trailers">No trailers could be loaded</string>
 
     <string name="default_detailed_title_text" translatable="false">
         Movie title default text to setup view

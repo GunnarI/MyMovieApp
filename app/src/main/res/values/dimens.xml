@@ -16,6 +16,10 @@
     <dimen name="movie_icon_height">220dp</dimen>
     <dimen name="movie_icon_left_margin">24dp</dimen>
 
+    <!-- Trailer thumbnail dimensions -->
+    <dimen name="trailer_thumb_width">100dp</dimen>
+    <dimen name="trailer_thumb_height">80dp</dimen>
+
     <!-- Detail view star icon sizes -->
     <dimen name="star_icon_dim">20dp</dimen>
     <dimen name="star_icon_spacing">4dp</dimen>

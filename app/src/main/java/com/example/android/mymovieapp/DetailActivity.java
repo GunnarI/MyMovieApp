@@ -2,21 +2,36 @@ package com.example.android.mymovieapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.support.v4.content.Loader;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
 
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+
+import com.example.android.mymovieapp.TrailerAdapter.TrailerAdapterOnClickHandler;
 
 /**
  * Created by gunnaringi on 2017-02-02.
  */
 
-public class DetailActivity extends AppCompatActivity {
+public class DetailActivity extends AppCompatActivity implements
+        TrailerAdapterOnClickHandler,
+        LoaderCallbacks<ArrayList<String[]>> {
 
     private MovieData mMovieData;
     private TextView mMovieTitle;
+
     private ImageView mMovieThumbnail;
     private TextView mMovieDate;
     private ImageView mMovieRatingStar1;
@@ -25,6 +40,18 @@ public class DetailActivity extends AppCompatActivity {
     private ImageView mMovieRatingStar4;
     private ImageView mMovieRatingStar5;
     private TextView mMovieDescription;
+
+    private TrailerAdapter mTrailerAdapter;
+    private ProgressBar mLoadingIndicator;
+    private RecyclerView mRecyclerView;
+    private TextView mErrorMessageDisplay;
+
+    private static final int TRAILER_LOADER_ID = 0;
+
+    @Override
+    public void onClick(String trailerClicked) {
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,9 +70,13 @@ public class DetailActivity extends AppCompatActivity {
         mMovieRatingStar5 = (ImageView) findViewById(R.id.star_icon_5);
         mMovieDescription = (TextView) findViewById(R.id.movie_description);
 
+        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_trailers);
+        mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_trailer_loading_indicator);
+        mErrorMessageDisplay = (TextView) findViewById(R.id.trailers_error_message_display);
+
         if (intentThatStartedThisActivity != null) {
             if (intentThatStartedThisActivity.hasExtra("MovieDetail")) {
-                mMovieData = (MovieData) intentThatStartedThisActivity
+                mMovieData = intentThatStartedThisActivity
                         .getParcelableExtra("MovieDetail");
 
                 mMovieTitle.setText(mMovieData.getTitle());
@@ -165,6 +196,59 @@ public class DetailActivity extends AppCompatActivity {
                 mMovieDescription.setText(mMovieData.getOverview());
             }
         }
+
+
+        LinearLayoutManager layoutManager =
+                new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        mRecyclerView.setLayoutManager(layoutManager);
+        mTrailerAdapter = new TrailerAdapter(this);
+        mRecyclerView.setAdapter(mTrailerAdapter);
+
+        loadTrailerData();
+    }
+
+    private void loadTrailerData() {
+        int loaderId = TRAILER_LOADER_ID;
+        LoaderManager.LoaderCallbacks<ArrayList<String[]>> callbacks = DetailActivity.this;
+        Bundle bundleForLoader = null;
+
+        getSupportLoaderManager().initLoader(loaderId, bundleForLoader, callbacks);
+    }
+
+    @Override
+    public Loader<ArrayList<String[]>> onCreateLoader(int id, Bundle args) {
+        return new FetchMovieTrailers(this, mLoadingIndicator, mMovieData.getId());
+    }
+
+    @Override
+    public void onLoadFinished(Loader<ArrayList<String[]>> loader, ArrayList<String[]> data) {
+        if (data != null) {
+            showTrailersView();
+            mTrailerAdapter.setTrailersData(data);
+            mTrailerAdapter.notifyDataSetChanged();
+        } else {
+            showErrorMessage();
+        }
+        mLoadingIndicator.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<ArrayList<String[]>> loader) {
+
+    }
+
+    private void showTrailersView() {
+        /* First, make sure the error is invisible */
+        mErrorMessageDisplay.setVisibility(View.INVISIBLE);
+        /* Then, make sure the weather data is visible */
+        mRecyclerView.setVisibility(View.VISIBLE);
+    }
+
+    private void showErrorMessage() {
+        /* First, hide the currently visible data */
+        mRecyclerView.setVisibility(View.INVISIBLE);
+        /* Then, show the error */
+        mErrorMessageDisplay.setVisibility(View.VISIBLE);
     }
 
     public int[] getRatingStars(Double rating) {
