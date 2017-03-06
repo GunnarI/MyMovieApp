@@ -1,6 +1,7 @@
 package com.example.android.mymovieapp;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -17,6 +18,7 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 
 import com.squareup.picasso.Picasso;
 
+import java.net.URI;
 import java.util.ArrayList;
 
 import com.example.android.mymovieapp.TrailerAdapter.TrailerAdapterOnClickHandler;
@@ -50,7 +52,12 @@ public class DetailActivity extends AppCompatActivity implements
 
     @Override
     public void onClick(String trailerClicked) {
+        Uri youtubeUrl = Uri.parse("http://www.youtube.com/watch?v=" + trailerClicked);
+        Intent intent = new Intent(Intent.ACTION_VIEW, youtubeUrl);
 
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }
     }
 
     @Override
