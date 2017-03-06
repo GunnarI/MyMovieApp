@@ -1,5 +1,6 @@
 package com.example.android.mymovieapp;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -51,16 +53,6 @@ public class DetailActivity extends AppCompatActivity implements
     private static final int TRAILER_LOADER_ID = 0;
 
     @Override
-    public void onClick(String trailerClicked) {
-        Uri youtubeUrl = Uri.parse("http://www.youtube.com/watch?v=" + trailerClicked);
-        Intent intent = new Intent(Intent.ACTION_VIEW, youtubeUrl);
-
-        if (intent.resolveActivity(getPackageManager()) != null) {
-            startActivity(intent);
-        }
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
@@ -93,7 +85,6 @@ public class DetailActivity extends AppCompatActivity implements
                 mMovieDate.setText(mMovieData.getRelYear());
                 Double rating = Double.parseDouble(mMovieData.getRating());
                 int[] ratingStars = getRatingStars(rating);
-                Log.i("The rating:",mMovieData.getRating());
 
                 switch (ratingStars[0]) {
                     case 5:
@@ -200,6 +191,19 @@ public class DetailActivity extends AppCompatActivity implements
                         break;
                 }
 
+                final Button button = (Button) findViewById(R.id.review_button);
+                button.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        Context context = DetailActivity.this;
+                        Class destinationClass = ReviewsActivity.class;
+
+                        Intent reviewsIntent = new Intent(context, destinationClass);
+                        reviewsIntent.putExtra(Intent.EXTRA_TEXT,
+                                new String[]{mMovieData.getId(), mMovieData.getTitle()});
+                        startActivity(reviewsIntent);
+                    }
+                });
+
                 mMovieDescription.setText(mMovieData.getOverview());
             }
         }
@@ -212,6 +216,16 @@ public class DetailActivity extends AppCompatActivity implements
         mRecyclerView.setAdapter(mTrailerAdapter);
 
         loadTrailerData();
+    }
+
+    @Override
+    public void onClick(String trailerClicked) {
+        Uri youtubeUrl = Uri.parse("http://www.youtube.com/watch?v=" + trailerClicked);
+        Intent intent = new Intent(Intent.ACTION_VIEW, youtubeUrl);
+
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }
     }
 
     private void loadTrailerData() {

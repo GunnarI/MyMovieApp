@@ -69,16 +69,16 @@
                 app:layout_constraintTop_toBottomOf="@+id/movie_rel_date" />
             <ImageView
                 android:id="@+id/star_icon_1"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="@dimen/star_icon_dim"
+                android:layout_height="@dimen/star_icon_dim"
                 app:srcCompat="@drawable/full_star"
                 app:layout_constraintLeft_toLeftOf="@+id/movie_rel_date"
                 android:layout_marginTop="@dimen/view_spacing_vertical_3"
                 app:layout_constraintTop_toBottomOf="@+id/movie_runtime" />
             <ImageView
                 android:id="@+id/star_icon_2"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="@dimen/star_icon_dim"
+                android:layout_height="@dimen/star_icon_dim"
                 app:srcCompat="@drawable/full_star"
                 app:layout_constraintLeft_toRightOf="@+id/star_icon_1"
                 android:layout_marginLeft="@dimen/star_icon_spacing"
@@ -86,8 +86,8 @@
                 android:layout_marginStart="@dimen/star_icon_spacing" />
             <ImageView
                 android:id="@+id/star_icon_3"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="@dimen/star_icon_dim"
+                android:layout_height="@dimen/star_icon_dim"
                 app:srcCompat="@drawable/full_star"
                 app:layout_constraintLeft_toRightOf="@+id/star_icon_2"
                 android:layout_marginLeft="@dimen/star_icon_spacing"
@@ -95,8 +95,8 @@
                 android:layout_marginStart="@dimen/star_icon_spacing" />
             <ImageView
                 android:id="@+id/star_icon_4"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="@dimen/star_icon_dim"
+                android:layout_height="@dimen/star_icon_dim"
                 app:srcCompat="@drawable/three_quarter_star"
                 app:layout_constraintLeft_toRightOf="@+id/star_icon_3"
                 android:layout_marginLeft="@dimen/star_icon_spacing"
@@ -104,15 +104,15 @@
                 android:layout_marginStart="@dimen/star_icon_spacing" />
             <ImageView
                 android:id="@+id/star_icon_5"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="@dimen/star_icon_dim"
+                android:layout_height="@dimen/star_icon_dim"
                 app:srcCompat="@drawable/empty_star"
                 app:layout_constraintLeft_toRightOf="@+id/star_icon_4"
                 android:layout_marginLeft="@dimen/star_icon_spacing"
                 app:layout_constraintBottom_toBottomOf="@+id/star_icon_4"
                 android:layout_marginStart="@dimen/star_icon_spacing" />
             <Button
-                android:id="@+id/button"
+                android:id="@+id/review_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/button_reviews"
