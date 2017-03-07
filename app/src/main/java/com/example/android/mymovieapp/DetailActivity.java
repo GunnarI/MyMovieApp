@@ -15,12 +15,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.support.v4.content.Loader;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 
 import com.squareup.picasso.Picasso;
-
-import java.net.URI;
 import java.util.ArrayList;
 
 import com.example.android.mymovieapp.TrailerAdapter.TrailerAdapterOnClickHandler;
@@ -50,7 +47,7 @@ public class DetailActivity extends AppCompatActivity implements
     private RecyclerView mRecyclerView;
     private TextView mErrorMessageDisplay;
 
-    private static final int TRAILER_LOADER_ID = 0;
+    private static final int TRAILER_LOADER_ID = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
