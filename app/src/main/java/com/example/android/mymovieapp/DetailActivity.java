@@ -48,6 +48,8 @@ public class DetailActivity extends AppCompatActivity implements
     private TextView mErrorMessageDisplay;
 
     private static final int TRAILER_LOADER_ID = 1;
+    private static final int REVIEWS_ACTIVITY_REQUEST_CODE = 101;
+    private static final String REVIEWS_EXTRA = "reviewsExtra";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -197,22 +199,34 @@ public class DetailActivity extends AppCompatActivity implements
                         Intent reviewsIntent = new Intent(context, destinationClass);
                         reviewsIntent.putExtra(Intent.EXTRA_TEXT,
                                 new String[]{mMovieData.getId(), mMovieData.getTitle()});
-                        startActivity(reviewsIntent);
+                        startActivityForResult(reviewsIntent, REVIEWS_ACTIVITY_REQUEST_CODE);
                     }
                 });
 
                 mMovieDescription.setText(mMovieData.getOverview());
+
+                LinearLayoutManager layoutManager =
+                        new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+                mRecyclerView.setLayoutManager(layoutManager);
+                mTrailerAdapter = new TrailerAdapter(this);
+                mRecyclerView.setAdapter(mTrailerAdapter);
+
+                loadTrailerData();
             }
         }
+    }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode,
+                                    Intent data) {
+        if (requestCode == REVIEWS_ACTIVITY_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                ArrayList<ReviewData> reviewsData =
+                        data.getParcelableArrayListExtra("ReviewExtra");
 
-        LinearLayoutManager layoutManager =
-                new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        mRecyclerView.setLayoutManager(layoutManager);
-        mTrailerAdapter = new TrailerAdapter(this);
-        mRecyclerView.setAdapter(mTrailerAdapter);
-
-        loadTrailerData();
+                mMovieData.setReviews(reviewsData);
+            }
+        }
     }
 
     @Override
@@ -244,6 +258,7 @@ public class DetailActivity extends AppCompatActivity implements
             showTrailersView();
             mTrailerAdapter.setTrailersData(data);
             mTrailerAdapter.notifyDataSetChanged();
+            mMovieData.setTrailers(data);
         } else {
             showErrorMessage();
         }

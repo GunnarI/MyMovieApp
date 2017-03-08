@@ -16,12 +16,12 @@ import java.util.List;
 
 public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewsAdapterViewHolder> {
 
-    private ArrayList<String[]> mReviewData;
+    private ArrayList<ReviewData> mReviewData;
 
     @Override
     public void onBindViewHolder(ReviewsAdapterViewHolder reviewsAdapterViewHolder, int position) {
-        reviewsAdapterViewHolder.mReviewAuthor.setText(mReviewData.get(position)[0]);
-        reviewsAdapterViewHolder.mReviewContent.setText(mReviewData.get(position)[1]);
+        reviewsAdapterViewHolder.mReviewAuthor.setText(mReviewData.get(position).getReviewAuthor());
+        reviewsAdapterViewHolder.mReviewContent.setText(mReviewData.get(position).getReviewContent());
     }
 
     @Override
@@ -53,7 +53,7 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewsA
         return mReviewData.size();
     }
 
-    public void setReviewData(ArrayList<String[]> reviewData) {
+    public void setReviewData(ArrayList<ReviewData> reviewData) {
         mReviewData = new ArrayList(reviewData);
         notifyDataSetChanged();
     }

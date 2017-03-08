@@ -3,7 +3,7 @@ package com.example.android.mymovieapp;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  * Created by gunnaringi on 2017-02-02.
@@ -16,6 +16,8 @@ class MovieData implements Parcelable {
     private String rating;
     private String relDate;
     private String id;
+    private ArrayList<String[]> trailers;
+    private ArrayList<ReviewData> reviews;
 
     public MovieData(String imgUrl, String title, String overview,
                      String rating, String relDate, String id)
@@ -39,29 +41,28 @@ class MovieData implements Parcelable {
         return partedDate[0];
     }
     public String getId() { return id; }
+    public ArrayList<String[]> getTrailers() { return trailers; }
+    public ArrayList<ReviewData> getReviews() { return reviews; }
 
     //Setters
     public void setImgUrl(String imgUrl) {
         this.imgUrl = imgUrl;
     }
-
     public void setTitle(String title) {
         this.title = title;
     }
-
     public void setOverview(String overview) {
         this.overview = overview;
     }
-
     public void setRating(String rating) {
         this.rating = rating;
     }
-
     public void setRelDate(String relDate) {
         this.relDate = relDate;
     }
-
     public void setId(String id) { this.id = id; }
+    public void setTrailers(ArrayList<String[]> trailers) { this.trailers = trailers; }
+    public void setReviews(ArrayList<ReviewData> reviews) { this.reviews = reviews; }
 
     public MovieData(Parcel in){
         String[] data = new String[6];

@@ -1,8 +1,11 @@
 package com.example.android.mymovieapp;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -24,13 +27,11 @@ import java.util.ArrayList;
  */
 
 public class ReviewsActivity extends AppCompatActivity
-        implements LoaderCallbacks<ArrayList<String[]>> {
+        implements LoaderCallbacks<ArrayList<ReviewData>> {
 
     private String movieId;
     private String movieTitle;
-
-    //private TextView mReviewAuthor;
-    //private TextView mReviewContent;
+    private ArrayList<ReviewData> reviewsData;
 
     private TextView mMovieTitle;
     private RecyclerView mRecyclerView;
@@ -40,6 +41,7 @@ public class ReviewsActivity extends AppCompatActivity
     private ReviewsAdapter mReviewsAdapter;
 
     private static final int REVIEWS_LOADER_ID = 2;
+    private static final String REVIEWS_EXTRA = "reviewsExtra";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,8 +50,6 @@ public class ReviewsActivity extends AppCompatActivity
 
         Intent intentThatStartedThisActivity = getIntent();
         mMovieTitle = (TextView) findViewById(R.id.movie_title_reviews);
-        //mReviewAuthor = (TextView) findViewById(R.id.review_author);
-        //mReviewContent = (TextView) findViewById(R.id.review_content);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_reviews);
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_reviews_loading_indicator);
@@ -73,41 +73,48 @@ public class ReviewsActivity extends AppCompatActivity
                 loadReviewData();
             }
         }
-
-        //getActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Intent resultIntent = new Intent();
+        resultIntent.putParcelableArrayListExtra("ReviewExtra", reviewsData);
+
+        setResult(Activity.RESULT_OK, resultIntent);
+
         this.finish();
         return true;
     }
 
     public void loadReviewData() {
         int loaderId = REVIEWS_LOADER_ID;
-        LoaderCallbacks<ArrayList<String[]>> callbacks = ReviewsActivity.this;
+        LoaderCallbacks<ArrayList<ReviewData>> callbacks = ReviewsActivity.this;
         Bundle bundleForLoader = null;
 
         getSupportLoaderManager().initLoader(loaderId, bundleForLoader, callbacks);
     }
 
     @Override
-    public Loader<ArrayList<String[]>> onCreateLoader(int id, Bundle args) {
+    public Loader<ArrayList<ReviewData>> onCreateLoader(int id, Bundle args) {
         return new FetchMovieReviews(this, mLoadingIndicator, movieId);
     }
 
     @Override
-    public void onLoadFinished(Loader<ArrayList<String[]>> loader, ArrayList<String[]> data) {
+    public void onLoadFinished(Loader<ArrayList<ReviewData>> loader, ArrayList<ReviewData> data) {
         if (data != null && data.size() > 1) {
             showReviewsView();
             mReviewsAdapter.setReviewData(data);
             mReviewsAdapter.notifyDataSetChanged();
+            reviewsData = data;
         } else if (data.size() == 0) {
             Toast.makeText(getApplicationContext(),
                     "No reviews have been written for this movie",
                     Toast.LENGTH_LONG).show();
+            Intent resultIntent = new Intent();
+            resultIntent.putParcelableArrayListExtra("ReviewExtra", data);
+
+            setResult(Activity.RESULT_OK, resultIntent);
             this.finish();
-            //showErrorMessage(); // TODO : replace with another specific message?
         } else {
             showErrorMessage();
         }
@@ -115,7 +122,7 @@ public class ReviewsActivity extends AppCompatActivity
     }
 
     @Override
-    public void onLoaderReset(Loader<ArrayList<String[]>> loader) {
+    public void onLoaderReset(Loader<ArrayList<ReviewData>> loader) {
 
     }
 

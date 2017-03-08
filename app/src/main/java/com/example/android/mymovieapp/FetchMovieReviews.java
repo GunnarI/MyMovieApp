@@ -23,10 +23,10 @@ import java.util.ArrayList;
  * Created by gunnaringi on 2017-03-07.
  */
 
-public class FetchMovieReviews extends AsyncTaskLoader<ArrayList<String[]>> {
+public class FetchMovieReviews extends AsyncTaskLoader<ArrayList<ReviewData>> {
     private final String LOG_TAG = ReviewsActivity.class.getSimpleName();
 
-    ArrayList<String[]> mReviewsData = null;
+    ArrayList<ReviewData> mReviewsData = null;
     private Context context;
     private ProgressBar mLoadingIndicator;
     private String movieId;
@@ -49,7 +49,7 @@ public class FetchMovieReviews extends AsyncTaskLoader<ArrayList<String[]>> {
     }
 
     @Override
-    public ArrayList<String[]> loadInBackground() {
+    public ArrayList<ReviewData> loadInBackground() {
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
 
@@ -115,12 +115,12 @@ public class FetchMovieReviews extends AsyncTaskLoader<ArrayList<String[]>> {
     }
 
     @Override
-    public void deliverResult(ArrayList<String[]> data) {
+    public void deliverResult(ArrayList<ReviewData> data) {
         mReviewsData = data;
         super.deliverResult(data);
     }
 
-    public ArrayList<String[]> getReviewDataFromJson(String reviewJsonStr) throws JSONException {
+    public ArrayList<ReviewData> getReviewDataFromJson(String reviewJsonStr) throws JSONException {
         final String REVIEWS_LIST = "results";
         final String REVIEW_AUTHOR = "author";
         final String REVIEW_CONTENT = "content";
@@ -128,12 +128,12 @@ public class FetchMovieReviews extends AsyncTaskLoader<ArrayList<String[]>> {
         JSONObject reviewsJson = new JSONObject(reviewJsonStr);
         JSONArray reviewsArray = reviewsJson.getJSONArray(REVIEWS_LIST);
 
-        ArrayList<String[]> reviewsData = new ArrayList<>();
+        ArrayList<ReviewData> reviewsData = new ArrayList<>();
         for (int i = 0; i < reviewsArray.length(); i++) {
-            String[] reviewData = new String[]{
+            ReviewData reviewData = new ReviewData(
                     reviewsArray.getJSONObject(i).getString(REVIEW_AUTHOR),
                     reviewsArray.getJSONObject(i).getString(REVIEW_CONTENT)
-            };
+            );
             reviewsData.add(reviewData);
         }
 
