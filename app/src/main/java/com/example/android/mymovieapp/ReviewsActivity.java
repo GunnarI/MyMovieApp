@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -97,13 +98,16 @@ public class ReviewsActivity extends AppCompatActivity
 
     @Override
     public void onLoadFinished(Loader<ArrayList<String[]>> loader, ArrayList<String[]> data) {
-        if (data != null) {
-            Log.e("WTF", "WTF");
+        if (data != null && data.size() > 1) {
             showReviewsView();
             mReviewsAdapter.setReviewData(data);
             mReviewsAdapter.notifyDataSetChanged();
         } else if (data.size() == 0) {
-            showErrorMessage(); // TODO : replace with another specific message?
+            Toast.makeText(getApplicationContext(),
+                    "No reviews have been written for this movie",
+                    Toast.LENGTH_LONG).show();
+            this.finish();
+            //showErrorMessage(); // TODO : replace with another specific message?
         } else {
             showErrorMessage();
         }
