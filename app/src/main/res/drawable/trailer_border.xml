@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:top="@dimen/trailer_list_border_negative_width"
+        android:right="@dimen/trailer_list_border_negative_width"
+        android:left="@dimen/trailer_list_border_negative_width">
+        <shape android:shape="rectangle">
+            <stroke android:width="@dimen/trailer_list_border_width"
+                android:color="@color/colorPrimaryDark" />
+        </shape>
+    </item>
+</layer-list>

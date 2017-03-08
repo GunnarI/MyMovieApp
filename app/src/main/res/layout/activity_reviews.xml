@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <TextView
-        android:id="@+id/movie_title"
+        android:id="@+id/movie_title_reviews"
         tools:text="@string/default_detailed_title_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -24,16 +24,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
         <TextView
-            android:id="@+id/poster_error_message_display"
+            android:id="@+id/reviews_error_message_display"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="@dimen/padding_err_message"
-            android:text="@string/error_message"
+            android:text="@string/error_message_reviews"
             android:textSize="@dimen/text_size_large"
             android:visibility="invisible" />
 
         <ProgressBar
-            android:id="@+id/pb_loading_indicator"
+            android:id="@+id/pb_reviews_loading_indicator"
             android:layout_height="@dimen/progress_bar_dim"
             android:layout_width="@dimen/progress_bar_dim"
             android:layout_gravity="center"

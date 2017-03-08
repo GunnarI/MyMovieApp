@@ -69,16 +69,16 @@
                 app:layout_constraintTop_toBottomOf="@+id/movie_rel_date" />
             <ImageView
                 android:id="@+id/star_icon_1"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="@dimen/star_icon_dim"
+                android:layout_height="@dimen/star_icon_dim"
                 app:srcCompat="@drawable/full_star"
                 app:layout_constraintLeft_toLeftOf="@+id/movie_rel_date"
                 android:layout_marginTop="@dimen/view_spacing_vertical_3"
                 app:layout_constraintTop_toBottomOf="@+id/movie_runtime" />
             <ImageView
                 android:id="@+id/star_icon_2"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="@dimen/star_icon_dim"
+                android:layout_height="@dimen/star_icon_dim"
                 app:srcCompat="@drawable/full_star"
                 app:layout_constraintLeft_toRightOf="@+id/star_icon_1"
                 android:layout_marginLeft="@dimen/star_icon_spacing"
@@ -86,8 +86,8 @@
                 android:layout_marginStart="@dimen/star_icon_spacing" />
             <ImageView
                 android:id="@+id/star_icon_3"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="@dimen/star_icon_dim"
+                android:layout_height="@dimen/star_icon_dim"
                 app:srcCompat="@drawable/full_star"
                 app:layout_constraintLeft_toRightOf="@+id/star_icon_2"
                 android:layout_marginLeft="@dimen/star_icon_spacing"
@@ -95,8 +95,8 @@
                 android:layout_marginStart="@dimen/star_icon_spacing" />
             <ImageView
                 android:id="@+id/star_icon_4"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="@dimen/star_icon_dim"
+                android:layout_height="@dimen/star_icon_dim"
                 app:srcCompat="@drawable/three_quarter_star"
                 app:layout_constraintLeft_toRightOf="@+id/star_icon_3"
                 android:layout_marginLeft="@dimen/star_icon_spacing"
@@ -104,15 +104,15 @@
                 android:layout_marginStart="@dimen/star_icon_spacing" />
             <ImageView
                 android:id="@+id/star_icon_5"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="@dimen/star_icon_dim"
+                android:layout_height="@dimen/star_icon_dim"
                 app:srcCompat="@drawable/empty_star"
                 app:layout_constraintLeft_toRightOf="@+id/star_icon_4"
                 android:layout_marginLeft="@dimen/star_icon_spacing"
                 app:layout_constraintBottom_toBottomOf="@+id/star_icon_4"
                 android:layout_marginStart="@dimen/star_icon_spacing" />
             <Button
-                android:id="@+id/button"
+                android:id="@+id/review_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/button_reviews"
@@ -141,7 +141,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/movie_description"
-                android:layout_marginLeft="@dimen/divider_horizontal_spacing"
                 android:layout_marginStart="@dimen/divider_horizontal_spacing"
                 android:layout_marginRight="@dimen/divider_horizontal_spacing"
                 android:layout_marginTop="@dimen/divider_vertical_spacing"
@@ -157,15 +156,34 @@
                 app:layout_constraintStart_toStartOf="@id/movie_description"
                 android:layout_marginTop="@dimen/divider_vertical_spacing"
                 tools:layout_editor_absoluteX="16dp" />
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recyclerview_trailers"
+            <FrameLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/trailer_header"
+                app:layout_constraintTop_toBottomOf="@+id/trailer_header"
                 app:layout_constraintStart_toStartOf="parent"
-                android:paddingTop="@dimen/view_spacing_vertical_3"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin" />
+                app:layout_constraintEnd_toEndOf="parent">
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerview_trailers"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/view_spacing_vertical_3"
+                    android:paddingLeft="@dimen/activity_horizontal_margin"
+                    android:paddingRight="@dimen/activity_horizontal_margin" />
+                <TextView
+                    android:id="@+id/trailers_error_message_display"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/padding_err_message"
+                    android:text="@string/error_message_trailers"
+                    android:textSize="@dimen/text_size_large"
+                    android:visibility="invisible" />
+                <ProgressBar
+                    android:id="@+id/pb_trailer_loading_indicator"
+                    android:layout_height="@dimen/progress_bar_dim"
+                    android:layout_width="@dimen/progress_bar_dim"
+                    android:layout_gravity="center"
+                    android:visibility="invisible" />
+            </FrameLayout>
         </android.support.constraint.ConstraintLayout>
     </ScrollView>
 
