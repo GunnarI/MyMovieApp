@@ -7,7 +7,7 @@ import android.os.Parcelable;
  * Created by gunnaringi on 2017-03-08.
  */
 
-class ReviewData implements Parcelable {
+public class ReviewData implements Parcelable {
 
     private String reviewAuthor;
     private String reviewContent;

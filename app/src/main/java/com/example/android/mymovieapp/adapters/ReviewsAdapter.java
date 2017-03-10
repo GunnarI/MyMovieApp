@@ -1,4 +1,4 @@
-package com.example.android.mymovieapp;
+package com.example.android.mymovieapp.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -7,8 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.android.mymovieapp.R;
+import com.example.android.mymovieapp.ReviewData;
+
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by gunnaringi on 2017-03-06.

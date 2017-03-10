@@ -7,6 +7,7 @@
     <string name="orderby_key" translatable="false">orderby</string>
     <string name="pref_orderby_rate">0</string>
     <string name="pref_orderby_pop">1</string>
+    <string name="pref_orderby_fav">2</string>
 
     <string name="error_message">
         An error has occurred. Please check the internet connection and refresh.

@@ -1,4 +1,4 @@
-package com.example.android.mymovieapp;
+package com.example.android.mymovieapp.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -8,10 +8,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.android.mymovieapp.R;
+import com.example.android.mymovieapp.TrailerData;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by gunnaringi on 2017-03-05.
@@ -19,7 +20,7 @@ import java.util.List;
 
 public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerAdapterViewHolder> {
 
-    private ArrayList<String[]> mTrailersData;
+    private ArrayList<TrailerData> mTrailersData;
     private TrailerAdapterOnClickHandler mClickHandler;
 
     public interface TrailerAdapterOnClickHandler {
@@ -46,7 +47,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
         @Override
         public void onClick(View v) {
             int adapterPosition = getAdapterPosition();
-            String trailerYoutubeRef = mTrailersData.get(adapterPosition)[1];
+            String trailerYoutubeRef = mTrailersData.get(adapterPosition).getTrailerUrl();
 
             mClickHandler.onClick(trailerYoutubeRef);
         }
@@ -67,13 +68,14 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
     @Override
     public void onBindViewHolder(TrailerAdapterViewHolder trailerAdapterViewHolder, int position) {
         String url = "http://img.youtube.com/vi/"
-                + mTrailersData.get(position)[1]
+                + mTrailersData.get(position).getTrailerUrl()
                 + "/0.jpg";
         Picasso.with((Context) mClickHandler)
                 .load(url)
                 .placeholder(R.drawable.play_button)
                 .into(trailerAdapterViewHolder.mTrailerThumbnail);
-        trailerAdapterViewHolder.mTrailerName.setText(mTrailersData.get(position)[0]);
+        trailerAdapterViewHolder.mTrailerName.setText(mTrailersData
+                .get(position).getTrailerTitle());
     }
 
     @Override
@@ -82,7 +84,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
         return mTrailersData.size();
     }
 
-    public void setTrailersData(ArrayList<String[]> trailersData) {
+    public void setTrailersData(ArrayList<TrailerData> trailersData) {
         mTrailersData = new ArrayList(trailersData);
         notifyDataSetChanged();
     }

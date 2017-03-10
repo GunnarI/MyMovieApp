@@ -1,11 +1,15 @@
-package com.example.android.mymovieapp;
+package com.example.android.mymovieapp.loaders;
 
+import android.support.v4.content.AsyncTaskLoader;
 import android.content.Context;
 import android.net.Uri;
-import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
+
+import com.example.android.mymovieapp.BuildConfig;
+import com.example.android.mymovieapp.DetailActivity;
+import com.example.android.mymovieapp.TrailerData;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,29 +24,28 @@ import java.net.URL;
 import java.util.ArrayList;
 
 /**
- * Created by gunnaringi on 2017-02-10.
+ * Created by gunnaringi on 2017-03-05.
  */
 
-public class FetchMoviesTask extends AsyncTaskLoader<ArrayList<MovieData>> {
+public class FetchMovieTrailers extends AsyncTaskLoader<ArrayList<TrailerData>>{
+    private final String LOG_TAG = DetailActivity.class.getSimpleName();
 
-    private final String LOG_TAG = MainActivity.class.getSimpleName();
-
-    ArrayList<MovieData> mMovieData = null;
+    ArrayList<TrailerData> mTrailerData = null;
     private ProgressBar mLoadingIndicator;
     private Context context;
-    private String orderby;
+    private String movieId;
 
-    public FetchMoviesTask(Context context, ProgressBar mLoadingIndicator, String orderby) {
+    public FetchMovieTrailers(Context context, ProgressBar mLoadingIndicator, String movieId) {
         super(context);
         this.context = context;
         this.mLoadingIndicator = mLoadingIndicator;
-        this.orderby = orderby;
+        this.movieId = movieId;
     }
 
     @Override
     protected void onStartLoading() {
-        if (mMovieData != null) {
-            deliverResult(mMovieData);
+        if (mTrailerData != null) {
+            deliverResult(mTrailerData);
         } else {
             mLoadingIndicator.setVisibility(View.VISIBLE);
             forceLoad();
@@ -50,23 +53,28 @@ public class FetchMoviesTask extends AsyncTaskLoader<ArrayList<MovieData>> {
     }
 
     @Override
-    public ArrayList<MovieData> loadInBackground() {
+    public void deliverResult(ArrayList<TrailerData> data) {
+        mTrailerData = data;
+        super.deliverResult(data);
+    }
+
+    @Override
+    public ArrayList<TrailerData> loadInBackground() {
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
 
-        String movieJsonStr = null;
+        String trailerJsonStr = null;
 
         try {
             final String FILM_BASE_URL = "http://api.themoviedb.org/3/movie/";
 
             Uri builtUri = Uri.parse(FILM_BASE_URL).buildUpon()
-                    .appendPath(orderby)
+                    .appendPath(movieId)
+                    .appendPath("trailers")
                     .appendQueryParameter("api_key", BuildConfig.TMDB_API_KEY)
                     .build();
 
             URL url = new URL(builtUri.toString());
-
-            Log.i(LOG_TAG, builtUri.toString());
 
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
@@ -88,7 +96,7 @@ public class FetchMoviesTask extends AsyncTaskLoader<ArrayList<MovieData>> {
                 return null;
             }
 
-            movieJsonStr = buffer.toString();
+            trailerJsonStr = buffer.toString();
         } catch (IOException e) {
             Log.e(LOG_TAG, "Error ", e);
             return null;
@@ -107,7 +115,7 @@ public class FetchMoviesTask extends AsyncTaskLoader<ArrayList<MovieData>> {
         }
 
         try {
-            return getMovieDataFromJson(movieJsonStr);
+            return getTrailerDataFromJson(trailerJsonStr);
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
@@ -115,41 +123,25 @@ public class FetchMoviesTask extends AsyncTaskLoader<ArrayList<MovieData>> {
         return null;
     }
 
-    @Override
-    public void deliverResult(ArrayList<MovieData> data) {
-        mMovieData = data;
-        super.deliverResult(data);
-    }
+    private ArrayList<TrailerData> getTrailerDataFromJson(String trailerJsonStr) throws JSONException {
+        final String TRAILER_LIST = "youtube";
+        final String TRAILER_NAME = "name";
+        final String TRAILER_SOURCE = "source";
+        final String TRAILER_TYPE = "type";
 
-    private ArrayList<MovieData> getMovieDataFromJson(String movieJsonStr) throws JSONException {
-        // Things to get from TMDb:
-        final String FILM_LIST = "results";
-        final String FILM_POSTER = "poster_path";
-        final String FILM_DESC = "overview";
-        final String FILM_RELEASE_DATE = "release_date";
-        final String FILM_GENRE = "genre_ids";
-        final String FILM_TITLE = "title";
-        final String FILM_POPULAR_GRADE = "popularity";
-        final String FILM_RATING = "vote_average";
-        final String FILM_ID = "id";
+        JSONObject trailerJson = new JSONObject(trailerJsonStr);
+        JSONArray trailerArray = trailerJson.getJSONArray(TRAILER_LIST);
 
-        JSONObject movieJson = new JSONObject(movieJsonStr);
-        JSONArray movieArray = movieJson.getJSONArray(FILM_LIST);
-
-        ArrayList<MovieData> movieDatas = new ArrayList<>();
-        for(int i=0; i < movieArray.length(); i++) {
-            MovieData movieData = new MovieData(
-                    movieArray.getJSONObject(i).getString(FILM_POSTER),
-                    movieArray.getJSONObject(i).getString(FILM_TITLE),
-                    movieArray.getJSONObject(i).getString(FILM_DESC),
-                    movieArray.getJSONObject(i).getString(FILM_RATING),
-                    movieArray.getJSONObject(i).getString(FILM_RELEASE_DATE),
-                    movieArray.getJSONObject(i).getString(FILM_ID)
+        ArrayList<TrailerData> trailersData = new ArrayList<>();
+        for(int i = 0; i < trailerArray.length(); i++) {
+            TrailerData trailerData = new TrailerData(
+                    trailerArray.getJSONObject(i).getString(TRAILER_NAME),
+                    trailerArray.getJSONObject(i).getString(TRAILER_SOURCE),
+                    trailerArray.getJSONObject(i).getString(TRAILER_TYPE)
             );
-
-            movieDatas.add(movieData);
+            trailersData.add(trailerData);
         }
 
-        return movieDatas;
+        return trailersData;
     }
 }

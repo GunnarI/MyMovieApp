@@ -3,6 +3,7 @@ package com.example.android.mymovieapp;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
@@ -20,7 +21,10 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import com.example.android.mymovieapp.PosterAdapter.PosterAdapterOnClickHandler;
+import com.example.android.mymovieapp.adapters.PosterAdapter;
+import com.example.android.mymovieapp.adapters.PosterAdapter.PosterAdapterOnClickHandler;
+import com.example.android.mymovieapp.database.FavoriteDbHelper;
+import com.example.android.mymovieapp.loaders.FetchMoviesTask;
 
 public class MainActivity extends AppCompatActivity implements
         PosterAdapterOnClickHandler,
@@ -141,10 +145,14 @@ public class MainActivity extends AppCompatActivity implements
                 getString(R.string.orderby_key),
                 getString(R.string.pref_orderby_pop));
 
+        ArrayList<MovieData> mMovieData = null;
+
         if (orderby.equals(getString(R.string.pref_orderby_rate))) {
             orderby = "top_rated";
         } else if (orderby.equals(getString(R.string.pref_orderby_pop))) {
             orderby = "popular";
+        } else if (orderby.equals(getString(R.string.pref_orderby_fav))) {
+            orderby = "my_favorite";
         }
 
         return new FetchMoviesTask(this, mLoadingIndicator, orderby);

@@ -1,4 +1,4 @@
-package com.example.android.mymovieapp;
+package com.example.android.mymovieapp.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -6,6 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
+import com.example.android.mymovieapp.MovieData;
+import com.example.android.mymovieapp.R;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;

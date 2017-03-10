@@ -1,4 +1,4 @@
-package com.example.android.mymovieapp;
+package com.example.android.mymovieapp.loaders;
 
 import android.support.v4.content.AsyncTaskLoader;
 import android.content.Context;
@@ -6,6 +6,10 @@ import android.net.Uri;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
+
+import com.example.android.mymovieapp.BuildConfig;
+import com.example.android.mymovieapp.ReviewData;
+import com.example.android.mymovieapp.ReviewsActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,21 +22,20 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
 
 /**
- * Created by gunnaringi on 2017-03-05.
+ * Created by gunnaringi on 2017-03-07.
  */
 
-public class FetchMovieTrailers extends AsyncTaskLoader<ArrayList<String[]>>{
-    private final String LOG_TAG = DetailActivity.class.getSimpleName();
+public class FetchMovieReviews extends AsyncTaskLoader<ArrayList<ReviewData>> {
+    private final String LOG_TAG = ReviewsActivity.class.getSimpleName();
 
-    ArrayList<String[]> mTrailerData = null;
-    private ProgressBar mLoadingIndicator;
+    ArrayList<ReviewData> mReviewsData = null;
     private Context context;
+    private ProgressBar mLoadingIndicator;
     private String movieId;
 
-    public FetchMovieTrailers(Context context, ProgressBar mLoadingIndicator, String movieId) {
+    public FetchMovieReviews(Context context, ProgressBar mLoadingIndicator, String movieId) {
         super(context);
         this.context = context;
         this.mLoadingIndicator = mLoadingIndicator;
@@ -41,8 +44,8 @@ public class FetchMovieTrailers extends AsyncTaskLoader<ArrayList<String[]>>{
 
     @Override
     protected void onStartLoading() {
-        if (mTrailerData != null) {
-            deliverResult(mTrailerData);
+        if (mReviewsData != null) {
+            deliverResult(mReviewsData);
         } else {
             mLoadingIndicator.setVisibility(View.VISIBLE);
             forceLoad();
@@ -50,24 +53,18 @@ public class FetchMovieTrailers extends AsyncTaskLoader<ArrayList<String[]>>{
     }
 
     @Override
-    public void deliverResult(ArrayList<String[]> data) {
-        mTrailerData = data;
-        super.deliverResult(data);
-    }
-
-    @Override
-    public ArrayList<String[]> loadInBackground() {
+    public ArrayList<ReviewData> loadInBackground() {
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
 
-        String trailerJsonStr = null;
+        String reviewJsonStr = null;
 
         try {
             final String FILM_BASE_URL = "http://api.themoviedb.org/3/movie/";
 
             Uri builtUri = Uri.parse(FILM_BASE_URL).buildUpon()
                     .appendPath(movieId)
-                    .appendPath("trailers")
+                    .appendPath("reviews")
                     .appendQueryParameter("api_key", BuildConfig.TMDB_API_KEY)
                     .build();
 
@@ -93,7 +90,7 @@ public class FetchMovieTrailers extends AsyncTaskLoader<ArrayList<String[]>>{
                 return null;
             }
 
-            trailerJsonStr = buffer.toString();
+            reviewJsonStr = buffer.toString();
         } catch (IOException e) {
             Log.e(LOG_TAG, "Error ", e);
             return null;
@@ -112,39 +109,38 @@ public class FetchMovieTrailers extends AsyncTaskLoader<ArrayList<String[]>>{
         }
 
         try {
-            return getTrailerDataFromJson(trailerJsonStr);
+            return getReviewDataFromJson(reviewJsonStr);
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
         }
+
         return null;
     }
 
-    /**
-     * @param trailerJsonStr contains the JSON string from TMDB API
-     * @return ArrayList<String[]> each string array contains
-     *          (trailer name, youtube source string, trailer type)
-     * @throws JSONException
-     */
-    private ArrayList<String[]> getTrailerDataFromJson(String trailerJsonStr) throws JSONException {
-        final String TRAILER_LIST = "youtube";
-        final String TRAILER_NAME = "name";
-        final String TRAILER_SOURCE = "source";
-        final String TRAILER_TYPE = "type";
+    @Override
+    public void deliverResult(ArrayList<ReviewData> data) {
+        mReviewsData = data;
+        super.deliverResult(data);
+    }
 
-        JSONObject trailerJson = new JSONObject(trailerJsonStr);
-        JSONArray trailerArray = trailerJson.getJSONArray(TRAILER_LIST);
+    public ArrayList<ReviewData> getReviewDataFromJson(String reviewJsonStr) throws JSONException {
+        final String REVIEWS_LIST = "results";
+        final String REVIEW_AUTHOR = "author";
+        final String REVIEW_CONTENT = "content";
 
-        ArrayList<String[]> trailersData = new ArrayList<>();
-        for(int i = 0; i < trailerArray.length(); i++) {
-            String[] trailerData = new String[]{
-                    trailerArray.getJSONObject(i).getString(TRAILER_NAME),
-                    trailerArray.getJSONObject(i).getString(TRAILER_SOURCE),
-                    trailerArray.getJSONObject(i).getString(TRAILER_TYPE)
-            };
-            trailersData.add(trailerData);
+        JSONObject reviewsJson = new JSONObject(reviewJsonStr);
+        JSONArray reviewsArray = reviewsJson.getJSONArray(REVIEWS_LIST);
+
+        ArrayList<ReviewData> reviewsData = new ArrayList<>();
+        for (int i = 0; i < reviewsArray.length(); i++) {
+            ReviewData reviewData = new ReviewData(
+                    reviewsArray.getJSONObject(i).getString(REVIEW_AUTHOR),
+                    reviewsArray.getJSONObject(i).getString(REVIEW_CONTENT)
+            );
+            reviewsData.add(reviewData);
         }
 
-        return trailersData;
+        return reviewsData;
     }
 }

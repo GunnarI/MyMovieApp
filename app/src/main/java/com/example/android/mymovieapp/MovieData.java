@@ -9,15 +9,16 @@ import java.util.ArrayList;
  * Created by gunnaringi on 2017-02-02.
  */
 
-class MovieData implements Parcelable {
+public class MovieData implements Parcelable {
     private String imgUrl;
     private String title;
     private String overview;
     private String rating;
     private String relDate;
     private String id;
-    private ArrayList<String[]> trailers;
+    private ArrayList<TrailerData> trailers;
     private ArrayList<ReviewData> reviews;
+    private Boolean isFavorite = false;
 
     public MovieData(String imgUrl, String title, String overview,
                      String rating, String relDate, String id)
@@ -41,8 +42,9 @@ class MovieData implements Parcelable {
         return partedDate[0];
     }
     public String getId() { return id; }
-    public ArrayList<String[]> getTrailers() { return trailers; }
+    public ArrayList<TrailerData> getTrailers() { return trailers; }
     public ArrayList<ReviewData> getReviews() { return reviews; }
+    public Boolean getIsFavorite() { return isFavorite; }
 
     //Setters
     public void setImgUrl(String imgUrl) {
@@ -61,8 +63,9 @@ class MovieData implements Parcelable {
         this.relDate = relDate;
     }
     public void setId(String id) { this.id = id; }
-    public void setTrailers(ArrayList<String[]> trailers) { this.trailers = trailers; }
+    public void setTrailers(ArrayList<TrailerData> trailers) { this.trailers = trailers; }
     public void setReviews(ArrayList<ReviewData> reviews) { this.reviews = reviews; }
+    public void setIsFavorite(Boolean isFavorite) { this.isFavorite = isFavorite; }
 
     public MovieData(Parcel in){
         String[] data = new String[6];

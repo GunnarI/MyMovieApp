@@ -1,24 +1,21 @@
 package com.example.android.mymovieapp;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.support.annotation.Nullable;
-import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.android.mymovieapp.adapters.ReviewsAdapter;
+import com.example.android.mymovieapp.loaders.FetchMovieReviews;
 
 import java.util.ArrayList;
 
