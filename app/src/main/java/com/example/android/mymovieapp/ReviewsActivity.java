@@ -8,6 +8,7 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -38,7 +39,10 @@ public class ReviewsActivity extends AppCompatActivity
     private ReviewsAdapter mReviewsAdapter;
 
     private static final int REVIEWS_LOADER_ID = 2;
-    private static final String REVIEWS_EXTRA = "reviewsExtra";
+
+    private static final String REVIEW_DETAIL_EXTRA = "ReviewDetail";
+    private static final String MOVIE_ID_EXTRA = "MovieId";
+    private static final String MOVIE_TITLE_EXTRA = "MovieTitle";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,11 +57,11 @@ public class ReviewsActivity extends AppCompatActivity
         mErrorMessageDisplay = (TextView) findViewById(R.id.reviews_error_message_display);
 
         if (intentThatStartedThisActivity != null) {
-            if (intentThatStartedThisActivity.hasExtra(Intent.EXTRA_TEXT)) {
-                String[] movieData =
-                        intentThatStartedThisActivity.getStringArrayExtra(Intent.EXTRA_TEXT);
-                movieId = movieData[0];
-                movieTitle = movieData[1];
+            Bundle extras = intentThatStartedThisActivity.getExtras();
+
+            if (extras.containsKey(MOVIE_ID_EXTRA)) {
+                movieId = extras.getString(MOVIE_ID_EXTRA);
+                movieTitle = extras.getString(MOVIE_TITLE_EXTRA);
 
                 mMovieTitle.setText(movieTitle);
 
@@ -67,7 +71,25 @@ public class ReviewsActivity extends AppCompatActivity
                 mReviewsAdapter = new ReviewsAdapter();
                 mRecyclerView.setAdapter(mReviewsAdapter);
 
-                loadReviewData();
+                if (extras.containsKey(REVIEW_DETAIL_EXTRA)) {
+                    reviewsData = extras.getParcelableArrayList(REVIEW_DETAIL_EXTRA);
+                    if (reviewsData.size() > 1) {
+                        showReviewsView();
+                        mReviewsAdapter.setReviewData(reviewsData);
+                        mReviewsAdapter.notifyDataSetChanged();
+                    } else {
+                        Toast.makeText(getApplicationContext(),
+                                "No reviews have been written for this movie",
+                                Toast.LENGTH_LONG).show();
+                        Intent resultIntent = new Intent();
+                        resultIntent.putParcelableArrayListExtra("ReviewExtra", reviewsData);
+
+                        setResult(Activity.RESULT_OK, resultIntent);
+                        this.finish();
+                    }
+                } else {
+                    loadReviewData();
+                }
             }
         }
     }

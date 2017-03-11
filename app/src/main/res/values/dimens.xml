@@ -50,5 +50,5 @@
     <dimen name="padding_horizontal_1">30dp</dimen>
 
     <dimen name="progress_bar_dim">42dp</dimen>
-    <dimen name="big_progress_bar_padding">140dp</dimen>
+    <dimen name="big_progress_bar_padding">160dp</dimen>
 </resources>

@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -40,6 +41,11 @@ public class MainActivity extends AppCompatActivity implements
     private ProgressBar mLoadingIndicator;
 
     private static final int POSTER_LOADER_ID = 0;
+
+    private static final String MOVIE_DETAIL_EXTRA = "MovieDetail";
+    private static final String TRAILER_DETAIL_EXTRA = "TrailerDetail";
+    private static final String REVIEW_DETAIL_EXTRA = "ReviewDetail";
+    private static final String IS_FAVORITE_EXTRA = "IsFavorite";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,7 +126,17 @@ public class MainActivity extends AppCompatActivity implements
         Class destinationClass = DetailActivity.class;
 
         Intent detailIntent = new Intent(context, destinationClass);
-        detailIntent.putExtra("MovieDetail",movieClicked);
+        Bundle extras = new Bundle();
+        extras.putParcelable(MOVIE_DETAIL_EXTRA, movieClicked);
+        extras.putBoolean(IS_FAVORITE_EXTRA, movieClicked.getIsFavorite());
+        if (movieClicked.getTrailers() != null) {
+            extras.putParcelableArrayList(TRAILER_DETAIL_EXTRA, movieClicked.getTrailers());
+        }
+        if (movieClicked.getReviews() != null) {
+            extras.putParcelableArrayList(REVIEW_DETAIL_EXTRA, movieClicked.getReviews());
+        }
+        detailIntent.putExtras(extras);
+
         startActivity(detailIntent);
     }
 

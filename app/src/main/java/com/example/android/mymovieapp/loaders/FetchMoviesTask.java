@@ -13,6 +13,8 @@ import android.widget.ProgressBar;
 import com.example.android.mymovieapp.BuildConfig;
 import com.example.android.mymovieapp.MainActivity;
 import com.example.android.mymovieapp.MovieData;
+import com.example.android.mymovieapp.ReviewData;
+import com.example.android.mymovieapp.TrailerData;
 import com.example.android.mymovieapp.database.FavoriteContract.FavoriteEntry;
 import com.example.android.mymovieapp.database.FavoriteDbHelper;
 
@@ -66,11 +68,11 @@ public class FetchMoviesTask extends AsyncTaskLoader<ArrayList<MovieData>> {
             try {
                 FavoriteDbHelper dbHelper = new FavoriteDbHelper(context);
                 mDb = dbHelper.getReadableDatabase();
-                Cursor cursor = mDb.query(FavoriteEntry.MOVIE_TABLE_NAME,
+                Cursor movieCursor = mDb.query(FavoriteEntry.MOVIE_TABLE_NAME,
                         null, null, null, null, null,
-                        FavoriteEntry.COLUMN_MOVIE_TITLE);
+                        FavoriteEntry._ID);
 
-                return getmMovieDataFromDatabase(cursor);
+                return getmMovieDataFromDatabase(movieCursor);
             } catch (SQLiteException e) {
                 Log.e(LOG_TAG, "Error ", e);
             } finally {
@@ -182,28 +184,72 @@ public class FetchMoviesTask extends AsyncTaskLoader<ArrayList<MovieData>> {
         return movieDatas;
     }
 
-    private ArrayList<MovieData> getmMovieDataFromDatabase(Cursor cursor) {
+    private ArrayList<MovieData> getmMovieDataFromDatabase(Cursor movieCursor)
+            throws SQLiteException{
+
         ArrayList<MovieData> movieDatas = new ArrayList<>();
 
         try {
-            while (cursor.moveToNext()) {
+            while (movieCursor.moveToNext()) {
                 MovieData movieData = new MovieData(
-                        cursor.getString(cursor.getColumnIndex(
+                        movieCursor.getString(movieCursor.getColumnIndex(
                                 FavoriteEntry.COLUMN_MOVIE_POSTER_URL)),
-                        cursor.getString(cursor.getColumnIndex(FavoriteEntry.COLUMN_MOVIE_TITLE)),
-                        cursor.getString(cursor.getColumnIndex(
+                        movieCursor.getString(movieCursor.getColumnIndex(FavoriteEntry.COLUMN_MOVIE_TITLE)),
+                        movieCursor.getString(movieCursor.getColumnIndex(
                                 FavoriteEntry.COLUMN_MOVIE_OVERVIEW)),
-                        cursor.getString(cursor.getColumnIndex(FavoriteEntry.COLUMN_MOVIE_RATING)),
-                        cursor.getString(cursor.getColumnIndex(
+                        movieCursor.getString(movieCursor.getColumnIndex(FavoriteEntry.COLUMN_MOVIE_RATING)),
+                        movieCursor.getString(movieCursor.getColumnIndex(
                                 FavoriteEntry.COLUMN_MOVIE_RELEASE_DATE)),
-                        cursor.getString(cursor.getColumnIndex(FavoriteEntry.COLUMN_MOVIE_ID))
+                        movieCursor.getString(movieCursor.getColumnIndex(FavoriteEntry.COLUMN_MOVIE_ID))
                 );
+
+                String trailerQuery = "SELECT * FROM " +
+                        FavoriteEntry.TRAILER_TABLE_NAME +
+                        " WHERE " + FavoriteEntry.COLUMN_MOVIE_ID +
+                        "=" + movieData.getId();
+                String reviewQuery = "SELECT * FROM " +
+                        FavoriteEntry.REVIEW_TABLE_NAME +
+                        " WHERE " + FavoriteEntry.COLUMN_MOVIE_ID +
+                        "=" + movieData.getId();
+
+                Cursor trailerCursor = mDb.rawQuery(trailerQuery, null);
+                Cursor reviewCursor = mDb.rawQuery(reviewQuery, null);
+
+                ArrayList<TrailerData> trailerDatas = new ArrayList<>();
+                ArrayList<ReviewData> reviewDatas = new ArrayList<>();
+
+                while (trailerCursor.moveToNext()) {
+                    TrailerData trailerData = new TrailerData(
+                            trailerCursor.getString(trailerCursor.getColumnIndex(
+                                    FavoriteEntry.COLUMN_MOVIE_TRAILER_TITLE)),
+                            trailerCursor.getString(trailerCursor.getColumnIndex(
+                                    FavoriteEntry.COLUMN_MOVIE_TRAILER_URL)),
+                            trailerCursor.getString(trailerCursor.getColumnIndex(
+                                    FavoriteEntry.COLUMN_MOVIE_TRAILER_TYPE))
+                    );
+
+                    trailerDatas.add(trailerData);
+                }
+                while (reviewCursor.moveToNext()) {
+                    ReviewData reviewData = new ReviewData(
+                            reviewCursor.getString(reviewCursor.getColumnIndex(
+                                    FavoriteEntry.COLUMN_MOVIE_REVIEW_AUTHOR)),
+                            reviewCursor.getString(reviewCursor.getColumnIndex(
+                                    FavoriteEntry.COLUMN_MOVIE_REVIEW_CONTENT))
+                    );
+
+                    reviewDatas.add(reviewData);
+                }
+
+                movieData.setTrailers(trailerDatas);
+                movieData.setReviews(reviewDatas);
+
                 movieData.setIsFavorite(true);
 
                 movieDatas.add(movieData);
             }
         } finally {
-            cursor.close();
+            movieCursor.close();
         }
 
         return movieDatas;

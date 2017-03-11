@@ -32,6 +32,11 @@ import com.example.android.mymovieapp.adapters.TrailerAdapter.TrailerAdapterOnCl
  * Created by gunnaringi on 2017-02-02.
  */
 
+// TODO : activity_detail.xml has a field with movie duration but to get this we need to make
+    //      a new call to the api for a specific movie:
+    //      http://api.themoviedb.org/3/movie/movie_id?api_key=my_api_key
+    //      Need to decide wheather we should delete the field or make the call
+
 public class DetailActivity extends AppCompatActivity implements
         TrailerAdapterOnClickHandler {
 
@@ -57,7 +62,14 @@ public class DetailActivity extends AppCompatActivity implements
     private static final int INSERT_INTO_DATABASE_LOADER_ID = 2;
     private static final int DELETE_FROM_DATABASE_LOADER_ID = 3;
     private static final int REVIEWS_ACTIVITY_REQUEST_CODE = 101;
-    private static final String REVIEWS_EXTRA = "reviewsExtra";
+
+    private static final String MOVIE_DETAIL_EXTRA = "MovieDetail";
+    private static final String TRAILER_DETAIL_EXTRA = "TrailerDetail";
+    private static final String REVIEW_DETAIL_EXTRA = "ReviewDetail";
+    private static final String IS_FAVORITE_EXTRA = "IsFavorite";
+
+    private static final String MOVIE_ID_EXTRA = "MovieId";
+    private static final String MOVIE_TITLE_EXTRA = "MovieTitle";
 
     private LoaderCallbacks<ArrayList<TrailerData>> trailersLoaderListener
             = new LoaderCallbacks<ArrayList<TrailerData>>() {
@@ -89,11 +101,13 @@ public class DetailActivity extends AppCompatActivity implements
             = new LoaderCallbacks<Boolean>() {
         @Override
         public Loader<Boolean> onCreateLoader(int id, Bundle args) {
-            return new InsertMovieIntoDatabase(DetailActivity.this, mMovieData);
+            return new InsertMovieIntoDatabase(DetailActivity.this,
+                    mLoadingIndicatorForDb, mMovieData);
         }
 
         @Override
         public void onLoadFinished(Loader<Boolean> loader, Boolean data) {
+            mLoadingIndicatorForDb.setVisibility(View.INVISIBLE);
             if (data) {
                 Toast.makeText(DetailActivity.this,
                         mMovieData.getTitle() + " has been added to favorites",
@@ -134,9 +148,23 @@ public class DetailActivity extends AppCompatActivity implements
         mLoadingIndicatorForDb = (ProgressBar) findViewById(R.id.pb_database_loading_indicator);
 
         if (intentThatStartedThisActivity != null) {
-            if (intentThatStartedThisActivity.hasExtra("MovieDetail")) {
-                mMovieData = intentThatStartedThisActivity
-                        .getParcelableExtra("MovieDetail");
+            Bundle extras = intentThatStartedThisActivity.getExtras();
+
+            if (extras.containsKey(MOVIE_DETAIL_EXTRA)) {
+                //mMovieData = intentThatStartedThisActivity
+                //        .getParcelableExtra("MovieDetail");
+                mMovieData = extras.getParcelable(MOVIE_DETAIL_EXTRA);
+                mMovieData.setIsFavorite(extras.getBoolean(IS_FAVORITE_EXTRA));
+                if (extras.containsKey(TRAILER_DETAIL_EXTRA)) {
+                    ArrayList<TrailerData> mTrailerData
+                            = extras.getParcelableArrayList(TRAILER_DETAIL_EXTRA);
+                    mMovieData.setTrailers(mTrailerData);
+                }
+                if (extras.containsKey(REVIEW_DETAIL_EXTRA)) {
+                    ArrayList<ReviewData> mReviewData
+                            = extras.getParcelableArrayList(REVIEW_DETAIL_EXTRA);
+                    mMovieData.setReviews(mReviewData);
+                }
 
                 mMovieTitle.setText(mMovieData.getTitle());
                 Picasso.with(this)
@@ -258,9 +286,18 @@ public class DetailActivity extends AppCompatActivity implements
                         Class destinationClass = ReviewsActivity.class;
 
                         Intent reviewsIntent = new Intent(context, destinationClass);
-                        reviewsIntent.putExtra(Intent.EXTRA_TEXT,
-                                new String[]{mMovieData.getId(), mMovieData.getTitle()});
+                        //reviewsIntent.putExtra(Intent.EXTRA_TEXT,
+                        //        new String[]{mMovieData.getId(), mMovieData.getTitle()});
+                        Bundle reviewExtras = new Bundle();
+                        reviewExtras.putString(MOVIE_ID_EXTRA, mMovieData.getId());
+                        reviewExtras.putString(MOVIE_TITLE_EXTRA, mMovieData.getTitle());
+                        if (mMovieData.getIsFavorite()) {
+                            reviewExtras.putParcelableArrayList(REVIEW_DETAIL_EXTRA,
+                                    mMovieData.getReviews());
+                        }
+                        reviewsIntent.putExtras(reviewExtras);
                         startActivityForResult(reviewsIntent, REVIEWS_ACTIVITY_REQUEST_CODE);
+                        // TODO : If movie is favorite the reviews data should be passed so that we don't need to make a API or database call
                     }
                 });
 
@@ -268,6 +305,9 @@ public class DetailActivity extends AppCompatActivity implements
 
                 final FloatingActionButton mFavButton =
                         (FloatingActionButton) findViewById(R.id.favorite_button);
+                if (mMovieData.getIsFavorite()) {
+                    mFavButton.setImageResource(R.drawable.full_star);
+                }
                 mFavButton.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
                         if (mMovieData.getIsFavorite()) {
@@ -280,7 +320,7 @@ public class DetailActivity extends AppCompatActivity implements
                         } else {
                             mMovieData.setIsFavorite(true);
                             mFavButton.setImageResource(R.drawable.full_star);
-                            // TODO : Insert movie to database
+
                             insertMovieIntoDatabase();
                         }
                     }

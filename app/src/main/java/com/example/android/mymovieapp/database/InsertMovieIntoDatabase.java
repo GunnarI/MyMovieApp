@@ -7,6 +7,8 @@ import android.net.Uri;
 import android.support.v4.content.AsyncTaskLoader;
 import android.content.Context;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import com.example.android.mymovieapp.BuildConfig;
 import com.example.android.mymovieapp.MovieData;
@@ -36,17 +38,21 @@ public class InsertMovieIntoDatabase extends AsyncTaskLoader<Boolean> {
     private Context context;
     private MovieData mMovieData;
     private Boolean mDatabaseResult;
+    private ProgressBar mLoadingIndicator;
 
     private SQLiteDatabase mDb;
 
-    public InsertMovieIntoDatabase(Context context, MovieData movieData) {
+    public InsertMovieIntoDatabase(Context context,
+                                   ProgressBar mLoadingIndicator, MovieData movieData) {
         super(context);
         this.context = context;
         this.mMovieData = movieData;
+        this.mLoadingIndicator = mLoadingIndicator;
     }
 
     @Override
     protected void onStartLoading() {
+        mLoadingIndicator.setVisibility(View.VISIBLE);
         forceLoad();
     }
 
