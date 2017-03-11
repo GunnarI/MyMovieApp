@@ -198,4 +198,12 @@
         android:layout_alignParentRight="true"
         android:layout_marginRight="16dp"
         android:layout_marginBottom="16dp"/>
+
+    <ProgressBar
+        android:id="@+id/pb_database_loading_indicator"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="@dimen/big_progress_bar_padding"
+        android:gravity="center"
+        android:visibility="invisible"/>
 </RelativeLayout>

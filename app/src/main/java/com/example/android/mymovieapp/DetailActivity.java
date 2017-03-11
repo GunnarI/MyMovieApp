@@ -2,15 +2,15 @@ package com.example.android.mymovieapp;
 
 import android.content.Context;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -20,8 +20,8 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.widget.Toast;
 
 import com.example.android.mymovieapp.adapters.TrailerAdapter;
-import com.example.android.mymovieapp.database.FavoriteDbHelper;
 import com.example.android.mymovieapp.database.InsertMovieIntoDatabase;
+import com.example.android.mymovieapp.loaders.FetchMovieReviews;
 import com.example.android.mymovieapp.loaders.FetchMovieTrailers;
 import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
@@ -51,6 +51,7 @@ public class DetailActivity extends AppCompatActivity implements
     private ProgressBar mLoadingIndicator;
     private RecyclerView mRecyclerView;
     private TextView mErrorMessageDisplay;
+    private ProgressBar mLoadingIndicatorForDb;
 
     private static final int TRAILER_LOADER_ID = 1;
     private static final int INSERT_INTO_DATABASE_LOADER_ID = 2;
@@ -88,7 +89,6 @@ public class DetailActivity extends AppCompatActivity implements
             = new LoaderCallbacks<Boolean>() {
         @Override
         public Loader<Boolean> onCreateLoader(int id, Bundle args) {
-            //if ()
             return new InsertMovieIntoDatabase(DetailActivity.this, mMovieData);
         }
 
@@ -131,6 +131,7 @@ public class DetailActivity extends AppCompatActivity implements
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_trailers);
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_trailer_loading_indicator);
         mErrorMessageDisplay = (TextView) findViewById(R.id.trailers_error_message_display);
+        mLoadingIndicatorForDb = (ProgressBar) findViewById(R.id.pb_database_loading_indicator);
 
         if (intentThatStartedThisActivity != null) {
             if (intentThatStartedThisActivity.hasExtra("MovieDetail")) {
