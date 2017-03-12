@@ -22,5 +22,6 @@ public class FavoriteContract {
         public static final String COLUMN_MOVIE_TRAILER_TYPE = "trailersType";
         public static final String COLUMN_MOVIE_REVIEW_AUTHOR = "reviewsAuthor";
         public static final String COLUMN_MOVIE_REVIEW_CONTENT = "reviewsContent";
+        public static final String COLUMN_IMAGE_STORAGE_DIR = "storageDir";
     }
 }

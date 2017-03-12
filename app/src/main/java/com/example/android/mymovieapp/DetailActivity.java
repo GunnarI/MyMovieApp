@@ -1,10 +1,12 @@
 package com.example.android.mymovieapp;
 
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
@@ -21,12 +23,16 @@ import android.widget.Toast;
 
 import com.example.android.mymovieapp.adapters.TrailerAdapter;
 import com.example.android.mymovieapp.database.InsertMovieIntoDatabase;
-import com.example.android.mymovieapp.loaders.FetchMovieReviews;
 import com.example.android.mymovieapp.loaders.FetchMovieTrailers;
 import com.squareup.picasso.Picasso;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import com.example.android.mymovieapp.adapters.TrailerAdapter.TrailerAdapterOnClickHandler;
+import com.squareup.picasso.Target;
 
 /**
  * Created by gunnaringi on 2017-02-02.
@@ -67,6 +73,7 @@ public class DetailActivity extends AppCompatActivity implements
     private static final String TRAILER_DETAIL_EXTRA = "TrailerDetail";
     private static final String REVIEW_DETAIL_EXTRA = "ReviewDetail";
     private static final String IS_FAVORITE_EXTRA = "IsFavorite";
+    private static final String IMG_STORAGE_DIR_EXTRA = "StorageDir";
 
     private static final String MOVIE_ID_EXTRA = "MovieId";
     private static final String MOVIE_TITLE_EXTRA = "MovieTitle";
@@ -151,8 +158,6 @@ public class DetailActivity extends AppCompatActivity implements
             Bundle extras = intentThatStartedThisActivity.getExtras();
 
             if (extras.containsKey(MOVIE_DETAIL_EXTRA)) {
-                //mMovieData = intentThatStartedThisActivity
-                //        .getParcelableExtra("MovieDetail");
                 mMovieData = extras.getParcelable(MOVIE_DETAIL_EXTRA);
                 mMovieData.setIsFavorite(extras.getBoolean(IS_FAVORITE_EXTRA));
                 if (extras.containsKey(TRAILER_DETAIL_EXTRA)) {
@@ -166,10 +171,24 @@ public class DetailActivity extends AppCompatActivity implements
                     mMovieData.setReviews(mReviewData);
                 }
 
+
+                if (mMovieData.getIsFavorite()) {
+                    mMovieData.setImgStorageDir(extras.getString(IMG_STORAGE_DIR_EXTRA));
+                }
+
+
                 mMovieTitle.setText(mMovieData.getTitle());
-                Picasso.with(this)
-                        .load("http://image.tmdb.org/t/p/w500" + mMovieData.getImgUrl())
-                        .into(mMovieThumbnail);
+                if (mMovieData.getImgStorageDir() != null) {
+                    Picasso.with(this)
+                            .load(new File(mMovieData.getImgStorageDir(),
+                                    mMovieData.getImgUrl()))
+                            .into(mMovieThumbnail);
+                } else {
+                    Picasso.with(this)
+                            .load("http://image.tmdb.org/t/p/w500" + mMovieData.getImgUrl())
+                            .into(mMovieThumbnail);
+                }
+
                 mMovieDate.setText(mMovieData.getRelYear());
                 Double rating = Double.parseDouble(mMovieData.getRating());
                 int[] ratingStars = getRatingStars(rating);
@@ -363,24 +382,26 @@ public class DetailActivity extends AppCompatActivity implements
     }
 
     private void loadTrailerData() {
-        int loaderId = TRAILER_LOADER_ID;
-        //LoaderManager.LoaderCallbacks<ArrayList<String[]>> callbacks = DetailActivity.this;
-        Bundle bundleForLoader = null;
+        if (mMovieData.getIsFavorite()) {
+            showTrailersView();
+            mTrailerAdapter.setTrailersData(mMovieData.getTrailers());
+            mTrailerAdapter.setImgStorageDir(mMovieData.getImgStorageDir());
+            mTrailerAdapter.notifyDataSetChanged();
+        } else {
+            int loaderId = TRAILER_LOADER_ID;
+            Bundle bundleForLoader = null;
 
-        getSupportLoaderManager().initLoader(loaderId, bundleForLoader, trailersLoaderListener);
+            getSupportLoaderManager().initLoader(loaderId, bundleForLoader, trailersLoaderListener);
+        }
     }
 
     private void showTrailersView() {
-        /* First, make sure the error is invisible */
         mErrorMessageDisplay.setVisibility(View.INVISIBLE);
-        /* Then, make sure the weather data is visible */
         mRecyclerView.setVisibility(View.VISIBLE);
     }
 
     private void showErrorMessage() {
-        /* First, hide the currently visible data */
         mRecyclerView.setVisibility(View.INVISIBLE);
-        /* Then, show the error */
         mErrorMessageDisplay.setVisibility(View.VISIBLE);
     }
 
@@ -415,8 +436,63 @@ public class DetailActivity extends AppCompatActivity implements
     }
 
     public void insertMovieIntoDatabase() {
+
+        final String url = "http://image.tmdb.org/t/p/w500"
+                + mMovieData.getImgUrl();
+
+        Picasso.with(DetailActivity.this)
+                .load(url)
+                .into(saveImageToStorage(mMovieData.getImgUrl()));
+        if (mMovieData.getTrailers() != null) {
+            ArrayList<TrailerData> trailerDatas = mMovieData.getTrailers();
+            for (int t = 0; t < trailerDatas.size(); t++) {
+                Picasso.with(DetailActivity.this)
+                        .load(url)
+                        .into(saveImageToStorage("/" +
+                                trailerDatas.get(t).getTrailerUrl() + ".jpg"));
+            }
+        }
+
         int loaderId = INSERT_INTO_DATABASE_LOADER_ID;
         Bundle bundleForLoader = null;
         getSupportLoaderManager().initLoader(loaderId, bundleForLoader, insertIntoDbLoaderListener);
+    }
+
+    private Target saveImageToStorage(final String url) {
+        Target target = new Target() {
+            @Override
+            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                ContextWrapper cw = new ContextWrapper(DetailActivity.this);
+                File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+                File mypath=new File(directory, url);
+
+                FileOutputStream fos = null;
+                try {
+                    fos = new FileOutputStream(mypath);
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    try {
+                        fos.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                mMovieData.setImgStorageDir(directory.getAbsolutePath());
+            }
+
+            @Override
+            public void onBitmapFailed(Drawable errorDrawable) {
+
+            }
+
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+            }
+        };
+        return target;
     }
 }

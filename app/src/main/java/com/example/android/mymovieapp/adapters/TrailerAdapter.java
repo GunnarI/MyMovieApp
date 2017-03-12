@@ -2,6 +2,7 @@ package com.example.android.mymovieapp.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import com.example.android.mymovieapp.R;
 import com.example.android.mymovieapp.TrailerData;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -22,6 +24,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
 
     private ArrayList<TrailerData> mTrailersData;
     private TrailerAdapterOnClickHandler mClickHandler;
+    private String imgStorageDir;
 
     public interface TrailerAdapterOnClickHandler {
         void onClick(String trailerClicked);
@@ -67,13 +70,28 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
 
     @Override
     public void onBindViewHolder(TrailerAdapterViewHolder trailerAdapterViewHolder, int position) {
-        String url = "http://img.youtube.com/vi/"
-                + mTrailersData.get(position).getTrailerUrl()
-                + "/0.jpg";
-        Picasso.with((Context) mClickHandler)
-                .load(url)
-                .placeholder(R.drawable.play_button)
-                .into(trailerAdapterViewHolder.mTrailerThumbnail);
+        if (imgStorageDir != null) {
+            File f = new File(imgStorageDir,
+                    mTrailersData.get(position).getTrailerUrl() + ".jpg");
+
+            Picasso.with((Context) mClickHandler)
+                    .load(f)
+                    .placeholder(R.drawable.play_button)
+                    .into(trailerAdapterViewHolder.mTrailerThumbnail);
+
+            Log.i("Do I","get here");
+        } else {
+            String url = "http://img.youtube.com/vi/"
+                    + mTrailersData.get(position).getTrailerUrl()
+                    + "/0.jpg";
+            Picasso.with((Context) mClickHandler)
+                    .load(url)
+                    .placeholder(R.drawable.play_button)
+                    .into(trailerAdapterViewHolder.mTrailerThumbnail);
+
+            Log.i("Or do I","get here");
+        }
+
         trailerAdapterViewHolder.mTrailerName.setText(mTrailersData
                 .get(position).getTrailerTitle());
     }
@@ -87,5 +105,9 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
     public void setTrailersData(ArrayList<TrailerData> trailersData) {
         mTrailersData = new ArrayList(trailersData);
         notifyDataSetChanged();
+    }
+
+    public void setImgStorageDir(String imgStorageDir) {
+        this.imgStorageDir = imgStorageDir;
     }
 }

@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements
     private static final String TRAILER_DETAIL_EXTRA = "TrailerDetail";
     private static final String REVIEW_DETAIL_EXTRA = "ReviewDetail";
     private static final String IS_FAVORITE_EXTRA = "IsFavorite";
+    private static final String IMG_STORAGE_DIR_EXTRA = "StorageDir";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,6 +130,7 @@ public class MainActivity extends AppCompatActivity implements
         Bundle extras = new Bundle();
         extras.putParcelable(MOVIE_DETAIL_EXTRA, movieClicked);
         extras.putBoolean(IS_FAVORITE_EXTRA, movieClicked.getIsFavorite());
+        extras.putString(IMG_STORAGE_DIR_EXTRA, movieClicked.getImgStorageDir());
         if (movieClicked.getTrailers() != null) {
             extras.putParcelableArrayList(TRAILER_DETAIL_EXTRA, movieClicked.getTrailers());
         }
@@ -141,16 +143,12 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void showMoviePosterView() {
-        /* First, make sure the error is invisible */
         mErrorMessageDisplay.setVisibility(View.INVISIBLE);
-        /* Then, make sure the weather data is visible */
         mRecyclerView.setVisibility(View.VISIBLE);
     }
 
     private void showErrorMessage() {
-        /* First, hide the currently visible data */
         mRecyclerView.setVisibility(View.INVISIBLE);
-        /* Then, show the error */
         mErrorMessageDisplay.setVisibility(View.VISIBLE);
     }
 

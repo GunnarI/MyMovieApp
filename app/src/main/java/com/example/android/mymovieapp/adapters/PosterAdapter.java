@@ -1,16 +1,21 @@
 package com.example.android.mymovieapp.adapters;
 
 import android.content.Context;
+import android.content.ContextWrapper;
+import android.os.Environment;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.example.android.mymovieapp.DetailActivity;
 import com.example.android.mymovieapp.MovieData;
 import com.example.android.mymovieapp.R;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -65,13 +70,24 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterAdap
 
     @Override
     public void onBindViewHolder(PosterAdapterViewHolder posterAdapterViewHolder, int position) {
-        String url = "http://image.tmdb.org/t/p/"
-                + posterSizes[4]
-                + mMoviesData.get(position).getImgUrl();
-        Picasso.with((Context) mClickHandler)
-                .load(url)
-                .placeholder(R.drawable.imagenotfound_icon)
-                .into(posterAdapterViewHolder.mPosterImageView);
+        if (mMoviesData.get(position).getIsFavorite()) {
+            File uri = new File(mMoviesData.get(position).getImgStorageDir(),
+                    mMoviesData.get(position).getImgUrl());
+
+            Picasso.with((Context) mClickHandler)
+                    .load(uri)
+                    .placeholder(R.drawable.imagenotfound_icon)
+                    .into(posterAdapterViewHolder.mPosterImageView);
+        } else {
+            String uri = "http://image.tmdb.org/t/p/"
+                    + posterSizes[4]
+                    + mMoviesData.get(position).getImgUrl();
+            
+            Picasso.with((Context) mClickHandler)
+                    .load(uri)
+                    .placeholder(R.drawable.imagenotfound_icon)
+                    .into(posterAdapterViewHolder.mPosterImageView);
+        }
     }
 
     @Override

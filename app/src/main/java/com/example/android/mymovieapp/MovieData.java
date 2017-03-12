@@ -19,6 +19,7 @@ public class MovieData implements Parcelable {
     private ArrayList<TrailerData> trailers;
     private ArrayList<ReviewData> reviews;
     private Boolean isFavorite = false;
+    private String imgStorageDir;
 
     public MovieData(String imgUrl, String title, String overview,
                      String rating, String relDate, String id)
@@ -45,6 +46,7 @@ public class MovieData implements Parcelable {
     public ArrayList<TrailerData> getTrailers() { return trailers; }
     public ArrayList<ReviewData> getReviews() { return reviews; }
     public Boolean getIsFavorite() { return isFavorite; }
+    public String getImgStorageDir() { return imgStorageDir; }
 
     //Setters
     public void setImgUrl(String imgUrl) {
@@ -66,6 +68,7 @@ public class MovieData implements Parcelable {
     public void setTrailers(ArrayList<TrailerData> trailers) { this.trailers = trailers; }
     public void setReviews(ArrayList<ReviewData> reviews) { this.reviews = reviews; }
     public void setIsFavorite(Boolean isFavorite) { this.isFavorite = isFavorite; }
+    public void setImgStorageDir(String imgStorageDir) { this.imgStorageDir = imgStorageDir; }
 
     public MovieData(Parcel in){
         String[] data = new String[6];

@@ -9,7 +9,9 @@ import android.widget.ProgressBar;
 
 import com.example.android.mymovieapp.BuildConfig;
 import com.example.android.mymovieapp.DetailActivity;
+import com.example.android.mymovieapp.MovieData;
 import com.example.android.mymovieapp.TrailerData;
+import com.example.android.mymovieapp.database.FavoriteDbHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -120,6 +122,7 @@ public class FetchMovieTrailers extends AsyncTaskLoader<ArrayList<TrailerData>>{
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
         }
+
         return null;
     }
 

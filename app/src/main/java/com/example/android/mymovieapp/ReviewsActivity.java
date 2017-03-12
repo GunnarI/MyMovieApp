@@ -146,16 +146,12 @@ public class ReviewsActivity extends AppCompatActivity
     }
 
     private void showReviewsView() {
-        /* First, make sure the error is invisible */
         mErrorMessageDisplay.setVisibility(View.INVISIBLE);
-        /* Then, make sure the weather data is visible */
         mRecyclerView.setVisibility(View.VISIBLE);
     }
 
     private void showErrorMessage() {
-        /* First, hide the currently visible data */
         mRecyclerView.setVisibility(View.INVISIBLE);
-        /* Then, show the error */
         mErrorMessageDisplay.setVisibility(View.VISIBLE);
     }
 }

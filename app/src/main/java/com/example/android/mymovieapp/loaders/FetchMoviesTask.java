@@ -244,6 +244,10 @@ public class FetchMoviesTask extends AsyncTaskLoader<ArrayList<MovieData>> {
                 movieData.setTrailers(trailerDatas);
                 movieData.setReviews(reviewDatas);
 
+                movieData.setImgStorageDir(movieCursor
+                        .getString(movieCursor.getColumnIndex(
+                                FavoriteEntry.COLUMN_IMAGE_STORAGE_DIR)));
+
                 movieData.setIsFavorite(true);
 
                 movieDatas.add(movieData);
