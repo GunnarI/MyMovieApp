@@ -78,8 +78,6 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
                     .load(f)
                     .placeholder(R.drawable.play_button)
                     .into(trailerAdapterViewHolder.mTrailerThumbnail);
-
-            Log.i("Do I","get here");
         } else {
             String url = "http://img.youtube.com/vi/"
                     + mTrailersData.get(position).getTrailerUrl()
@@ -88,8 +86,6 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
                     .load(url)
                     .placeholder(R.drawable.play_button)
                     .into(trailerAdapterViewHolder.mTrailerThumbnail);
-
-            Log.i("Or do I","get here");
         }
 
         trailerAdapterViewHolder.mTrailerName.setText(mTrailersData

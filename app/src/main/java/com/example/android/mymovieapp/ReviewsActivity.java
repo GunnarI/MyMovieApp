@@ -31,6 +31,8 @@ public class ReviewsActivity extends AppCompatActivity
     private String movieTitle;
     private ArrayList<ReviewData> reviewsData;
 
+    private Boolean isStartedForResult;
+
     private TextView mMovieTitle;
     private RecyclerView mRecyclerView;
     private TextView mErrorMessageDisplay;
@@ -50,6 +52,7 @@ public class ReviewsActivity extends AppCompatActivity
         setContentView(R.layout.activity_reviews);
 
         Intent intentThatStartedThisActivity = getIntent();
+        isStartedForResult = (getCallingActivity() != null);
         mMovieTitle = (TextView) findViewById(R.id.movie_title_reviews);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_reviews);
@@ -96,10 +99,12 @@ public class ReviewsActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Intent resultIntent = new Intent();
-        resultIntent.putParcelableArrayListExtra("ReviewExtra", reviewsData);
+        if (isStartedForResult) {
+            Intent resultIntent = new Intent();
+            resultIntent.putParcelableArrayListExtra("ReviewExtra", reviewsData);
 
-        setResult(Activity.RESULT_OK, resultIntent);
+            setResult(Activity.RESULT_OK, resultIntent);
+        }
 
         this.finish();
         return true;
@@ -129,10 +134,13 @@ public class ReviewsActivity extends AppCompatActivity
             Toast.makeText(getApplicationContext(),
                     "No reviews have been written for this movie",
                     Toast.LENGTH_LONG).show();
-            Intent resultIntent = new Intent();
-            resultIntent.putParcelableArrayListExtra("ReviewExtra", data);
+            if (isStartedForResult) {
+                Intent resultIntent = new Intent();
+                resultIntent.putParcelableArrayListExtra("ReviewExtra", data);
 
-            setResult(Activity.RESULT_OK, resultIntent);
+                setResult(Activity.RESULT_OK, resultIntent);
+            }
+
             this.finish();
         } else {
             showErrorMessage();

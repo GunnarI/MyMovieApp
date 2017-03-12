@@ -1,11 +1,14 @@
 package com.example.android.mymovieapp.database;
 
-import android.content.AsyncTaskLoader;
-import android.content.ContentValues;
+import android.database.sqlite.SQLiteException;
+import android.support.v4.content.AsyncTaskLoader;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
+
+import com.example.android.mymovieapp.database.FavoriteContract.FavoriteEntry;
 
 /**
  * Created by gunnaringi on 2017-03-11.
@@ -36,6 +39,28 @@ public class DeleteMovieFromDatabase extends AsyncTaskLoader<Boolean> {
 
     @Override
     public Boolean loadInBackground() {
+        try {
+            FavoriteDbHelper dbHelper = new FavoriteDbHelper(context);
+            mDb = dbHelper.getWritableDatabase();
+
+            mDb.beginTransaction();
+            mDb.delete(FavoriteEntry.TRAILER_TABLE_NAME,
+                    FavoriteEntry.COLUMN_MOVIE_ID + "=" + mMovieId, null);
+            mDb.delete(FavoriteEntry.REVIEW_TABLE_NAME,
+                    FavoriteEntry.COLUMN_MOVIE_ID + "=" + mMovieId, null);
+            int rowsDeleted = mDb.delete(FavoriteEntry.MOVIE_TABLE_NAME,
+                    FavoriteEntry.COLUMN_MOVIE_ID + "=" + mMovieId, null);
+            if (rowsDeleted > 0) {
+                mDb.setTransactionSuccessful();
+                return true;
+            }
+            return false;
+        } catch (SQLiteException e) {
+            Log.e(LOG_TAG, "Error ", e);
+        } finally {
+            mDb.endTransaction();
+            mDb.close();
+        }
         return null;
     }
 

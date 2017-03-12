@@ -130,13 +130,18 @@ public class MainActivity extends AppCompatActivity implements
         Bundle extras = new Bundle();
         extras.putParcelable(MOVIE_DETAIL_EXTRA, movieClicked);
         extras.putBoolean(IS_FAVORITE_EXTRA, movieClicked.getIsFavorite());
-        extras.putString(IMG_STORAGE_DIR_EXTRA, movieClicked.getImgStorageDir());
-        if (movieClicked.getTrailers() != null) {
-            extras.putParcelableArrayList(TRAILER_DETAIL_EXTRA, movieClicked.getTrailers());
+
+        // If the movie is a favorite then we send the extra data needed to setup the detailed view
+        if (movieClicked.getIsFavorite()) {
+            extras.putString(IMG_STORAGE_DIR_EXTRA, movieClicked.getImgStorageDir());
+            if (movieClicked.getTrailers() != null) {
+                extras.putParcelableArrayList(TRAILER_DETAIL_EXTRA, movieClicked.getTrailers());
+            }
+            if (movieClicked.getReviews() != null) {
+                extras.putParcelableArrayList(REVIEW_DETAIL_EXTRA, movieClicked.getReviews());
+            }
         }
-        if (movieClicked.getReviews() != null) {
-            extras.putParcelableArrayList(REVIEW_DETAIL_EXTRA, movieClicked.getReviews());
-        }
+
         detailIntent.putExtras(extras);
 
         startActivity(detailIntent);
