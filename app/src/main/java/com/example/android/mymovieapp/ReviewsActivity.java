@@ -31,7 +31,8 @@ public class ReviewsActivity extends AppCompatActivity
     private String movieTitle;
     private ArrayList<ReviewData> reviewsData;
 
-    private Boolean isStartedForResult;
+
+    private Boolean isFavorite;
 
     private TextView mMovieTitle;
     private RecyclerView mRecyclerView;
@@ -52,7 +53,7 @@ public class ReviewsActivity extends AppCompatActivity
         setContentView(R.layout.activity_reviews);
 
         Intent intentThatStartedThisActivity = getIntent();
-        isStartedForResult = (getCallingActivity() != null);
+        isFavorite = (getCallingActivity() == null);
         mMovieTitle = (TextView) findViewById(R.id.movie_title_reviews);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_reviews);
@@ -74,32 +75,14 @@ public class ReviewsActivity extends AppCompatActivity
                 mReviewsAdapter = new ReviewsAdapter();
                 mRecyclerView.setAdapter(mReviewsAdapter);
 
-                if (extras.containsKey(REVIEW_DETAIL_EXTRA)) {
-                    reviewsData = extras.getParcelableArrayList(REVIEW_DETAIL_EXTRA);
-                    if (reviewsData.size() > 1) {
-                        showReviewsView();
-                        mReviewsAdapter.setReviewData(reviewsData);
-                        mReviewsAdapter.notifyDataSetChanged();
-                    } else {
-                        Toast.makeText(getApplicationContext(),
-                                "No reviews have been written for this movie",
-                                Toast.LENGTH_LONG).show();
-                        Intent resultIntent = new Intent();
-                        resultIntent.putParcelableArrayListExtra("ReviewExtra", reviewsData);
-
-                        setResult(Activity.RESULT_OK, resultIntent);
-                        this.finish();
-                    }
-                } else {
-                    loadReviewData();
-                }
+                loadReviewData();
             }
         }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (isStartedForResult) {
+        if (!isFavorite) {
             Intent resultIntent = new Intent();
             resultIntent.putParcelableArrayListExtra("ReviewExtra", reviewsData);
 
@@ -120,7 +103,7 @@ public class ReviewsActivity extends AppCompatActivity
 
     @Override
     public Loader<ArrayList<ReviewData>> onCreateLoader(int id, Bundle args) {
-        return new FetchMovieReviews(this, mLoadingIndicator, movieId);
+        return new FetchMovieReviews(this, mLoadingIndicator, movieId, isFavorite);
     }
 
     @Override
@@ -134,7 +117,7 @@ public class ReviewsActivity extends AppCompatActivity
             Toast.makeText(getApplicationContext(),
                     "No reviews have been written for this movie",
                     Toast.LENGTH_LONG).show();
-            if (isStartedForResult) {
+            if (!isFavorite) {
                 Intent resultIntent = new Intent();
                 resultIntent.putParcelableArrayListExtra("ReviewExtra", data);
 

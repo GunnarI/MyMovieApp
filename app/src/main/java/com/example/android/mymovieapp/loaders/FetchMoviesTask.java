@@ -194,55 +194,17 @@ public class FetchMoviesTask extends AsyncTaskLoader<ArrayList<MovieData>> {
                 MovieData movieData = new MovieData(
                         movieCursor.getString(movieCursor.getColumnIndex(
                                 FavoriteEntry.COLUMN_MOVIE_POSTER_URL)),
-                        movieCursor.getString(movieCursor.getColumnIndex(FavoriteEntry.COLUMN_MOVIE_TITLE)),
+                        movieCursor.getString(movieCursor.getColumnIndex(
+                                FavoriteEntry.COLUMN_MOVIE_TITLE)),
                         movieCursor.getString(movieCursor.getColumnIndex(
                                 FavoriteEntry.COLUMN_MOVIE_OVERVIEW)),
-                        movieCursor.getString(movieCursor.getColumnIndex(FavoriteEntry.COLUMN_MOVIE_RATING)),
+                        movieCursor.getString(movieCursor.getColumnIndex(
+                                FavoriteEntry.COLUMN_MOVIE_RATING)),
                         movieCursor.getString(movieCursor.getColumnIndex(
                                 FavoriteEntry.COLUMN_MOVIE_RELEASE_DATE)),
-                        movieCursor.getString(movieCursor.getColumnIndex(FavoriteEntry.COLUMN_MOVIE_ID))
+                        movieCursor.getString(movieCursor.getColumnIndex(
+                                FavoriteEntry.COLUMN_MOVIE_ID))
                 );
-
-                String trailerQuery = "SELECT * FROM " +
-                        FavoriteEntry.TRAILER_TABLE_NAME +
-                        " WHERE " + FavoriteEntry.COLUMN_MOVIE_ID +
-                        "=" + movieData.getId();
-                String reviewQuery = "SELECT * FROM " +
-                        FavoriteEntry.REVIEW_TABLE_NAME +
-                        " WHERE " + FavoriteEntry.COLUMN_MOVIE_ID +
-                        "=" + movieData.getId();
-
-                Cursor trailerCursor = mDb.rawQuery(trailerQuery, null);
-                Cursor reviewCursor = mDb.rawQuery(reviewQuery, null);
-
-                ArrayList<TrailerData> trailerDatas = new ArrayList<>();
-                ArrayList<ReviewData> reviewDatas = new ArrayList<>();
-
-                while (trailerCursor.moveToNext()) {
-                    TrailerData trailerData = new TrailerData(
-                            trailerCursor.getString(trailerCursor.getColumnIndex(
-                                    FavoriteEntry.COLUMN_MOVIE_TRAILER_TITLE)),
-                            trailerCursor.getString(trailerCursor.getColumnIndex(
-                                    FavoriteEntry.COLUMN_MOVIE_TRAILER_URL)),
-                            trailerCursor.getString(trailerCursor.getColumnIndex(
-                                    FavoriteEntry.COLUMN_MOVIE_TRAILER_TYPE))
-                    );
-
-                    trailerDatas.add(trailerData);
-                }
-                while (reviewCursor.moveToNext()) {
-                    ReviewData reviewData = new ReviewData(
-                            reviewCursor.getString(reviewCursor.getColumnIndex(
-                                    FavoriteEntry.COLUMN_MOVIE_REVIEW_AUTHOR)),
-                            reviewCursor.getString(reviewCursor.getColumnIndex(
-                                    FavoriteEntry.COLUMN_MOVIE_REVIEW_CONTENT))
-                    );
-
-                    reviewDatas.add(reviewData);
-                }
-
-                movieData.setTrailers(trailerDatas);
-                movieData.setReviews(reviewDatas);
 
                 movieData.setImgStorageDir(movieCursor
                         .getString(movieCursor.getColumnIndex(

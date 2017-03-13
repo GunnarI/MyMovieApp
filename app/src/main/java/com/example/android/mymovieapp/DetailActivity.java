@@ -86,7 +86,7 @@ public class DetailActivity extends AppCompatActivity implements
         @Override
         public Loader<ArrayList<TrailerData>> onCreateLoader(int id, Bundle args) {
             return new FetchMovieTrailers(DetailActivity.this,
-                    mLoadingIndicator, mMovieData.getId());
+                    mLoadingIndicator, mMovieData.getId(), mMovieData.getIsFavorite());
         }
 
         @Override
@@ -307,6 +307,11 @@ public class DetailActivity extends AppCompatActivity implements
                 final FloatingActionButton mFavButton =
                         (FloatingActionButton) findViewById(R.id.favorite_button);
 
+                LinearLayoutManager layoutManager =
+                        new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+                mRecyclerView.setLayoutManager(layoutManager);
+                mTrailerAdapter = new TrailerAdapter(this);
+
                 if (mMovieData.getIsFavorite()) {
                     if (extras.containsKey(TRAILER_DETAIL_EXTRA)) {
                         ArrayList<TrailerData> mTrailerData
@@ -346,6 +351,8 @@ public class DetailActivity extends AppCompatActivity implements
                     });
 
                     mFavButton.setImageResource(R.drawable.full_star);
+
+                    mTrailerAdapter.setImgStorageDir(mMovieData.getImgStorageDir());
                 } else {
                     Picasso.with(this)
                             .load("http://image.tmdb.org/t/p/w500" + mMovieData.getImgUrl())
@@ -385,10 +392,7 @@ public class DetailActivity extends AppCompatActivity implements
                     }
                 });
 
-                LinearLayoutManager layoutManager =
-                        new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-                mRecyclerView.setLayoutManager(layoutManager);
-                mTrailerAdapter = new TrailerAdapter(this);
+
                 mRecyclerView.setAdapter(mTrailerAdapter);
 
                 loadTrailerData();
@@ -420,17 +424,10 @@ public class DetailActivity extends AppCompatActivity implements
     }
 
     private void loadTrailerData() {
-        if (mMovieData.getIsFavorite()) {
-            showTrailersView();
-            mTrailerAdapter.setTrailersData(mMovieData.getTrailers());
-            mTrailerAdapter.setImgStorageDir(mMovieData.getImgStorageDir());
-            mTrailerAdapter.notifyDataSetChanged();
-        } else {
-            int loaderId = TRAILER_LOADER_ID;
-            Bundle bundleForLoader = null;
+        int loaderId = TRAILER_LOADER_ID;
+        Bundle bundleForLoader = null;
 
-            getSupportLoaderManager().initLoader(loaderId, bundleForLoader, trailersLoaderListener);
-        }
+        getSupportLoaderManager().initLoader(loaderId, bundleForLoader, trailersLoaderListener);
     }
 
     private void showTrailersView() {

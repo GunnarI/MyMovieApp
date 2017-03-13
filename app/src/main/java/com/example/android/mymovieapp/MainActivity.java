@@ -3,7 +3,9 @@ package com.example.android.mymovieapp;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
@@ -24,6 +26,7 @@ import java.util.ArrayList;
 
 import com.example.android.mymovieapp.adapters.PosterAdapter;
 import com.example.android.mymovieapp.adapters.PosterAdapter.PosterAdapterOnClickHandler;
+import com.example.android.mymovieapp.database.FavoriteContract;
 import com.example.android.mymovieapp.database.FavoriteDbHelper;
 import com.example.android.mymovieapp.loaders.FetchMoviesTask;
 
@@ -39,6 +42,8 @@ public class MainActivity extends AppCompatActivity implements
     private PosterAdapter mPosterAdapter;
     private TextView mErrorMessageDisplay;
     private ProgressBar mLoadingIndicator;
+
+    private Boolean mIsFavorite = false;
 
     private static final int POSTER_LOADER_ID = 0;
 
@@ -113,48 +118,12 @@ public class MainActivity extends AppCompatActivity implements
 
     private void loadMovieData() {
         int loaderId = POSTER_LOADER_ID;
-        LoaderCallbacks<ArrayList<MovieData>> callbacks = MainActivity.this;
         Bundle bundleForLoader = null;
+        LoaderCallbacks<ArrayList<MovieData>> callbacks = MainActivity.this;
 
         showMoviePosterView();
 
         getSupportLoaderManager().initLoader(loaderId, bundleForLoader, callbacks);
-    }
-
-    @Override
-    public void onClick(MovieData movieClicked) {
-        Context context = this;
-        Class destinationClass = DetailActivity.class;
-
-        Intent detailIntent = new Intent(context, destinationClass);
-        Bundle extras = new Bundle();
-        extras.putParcelable(MOVIE_DETAIL_EXTRA, movieClicked);
-        extras.putBoolean(IS_FAVORITE_EXTRA, movieClicked.getIsFavorite());
-
-        // If the movie is a favorite then we send the extra data needed to setup the detailed view
-        if (movieClicked.getIsFavorite()) {
-            extras.putString(IMG_STORAGE_DIR_EXTRA, movieClicked.getImgStorageDir());
-            if (movieClicked.getTrailers() != null) {
-                extras.putParcelableArrayList(TRAILER_DETAIL_EXTRA, movieClicked.getTrailers());
-            }
-            if (movieClicked.getReviews() != null) {
-                extras.putParcelableArrayList(REVIEW_DETAIL_EXTRA, movieClicked.getReviews());
-            }
-        }
-
-        detailIntent.putExtras(extras);
-
-        startActivity(detailIntent);
-    }
-
-    private void showMoviePosterView() {
-        mErrorMessageDisplay.setVisibility(View.INVISIBLE);
-        mRecyclerView.setVisibility(View.VISIBLE);
-    }
-
-    private void showErrorMessage() {
-        mRecyclerView.setVisibility(View.INVISIBLE);
-        mErrorMessageDisplay.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -174,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements
             orderby = "my_favorite";
         }
 
-        return new FetchMoviesTask(this, mLoadingIndicator, orderby);
+        return new FetchMoviesTask(MainActivity.this, mLoadingIndicator, orderby);
     }
 
     @Override
@@ -194,10 +163,81 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
+    @Override
+    public void onClick(MovieData movieClicked) {
+        Context context = this;
+        Class destinationClass = DetailActivity.class;
+
+        Intent detailIntent = new Intent(context, destinationClass);
+
+        // If we are using top rated or popular as orderby then the movie is not marked as favorite
+        // so we will have to search the db to see if it is actually favorited.
+        if (!movieClicked.getIsFavorite()) {
+            String imgSource = checkIfInDb(movieClicked.getId());
+            if(imgSource != null) {
+                movieClicked.setIsFavorite(true);
+                movieClicked.setImgStorageDir(imgSource);
+            }
+        }
+
+        Bundle extras = new Bundle();
+        extras.putParcelable(MOVIE_DETAIL_EXTRA, movieClicked);
+        extras.putBoolean(IS_FAVORITE_EXTRA, movieClicked.getIsFavorite());
+
+        // If the movie is a favorite then we send the extra data needed to setup the detailed view
+        if (movieClicked.getIsFavorite()) {
+            extras.putString(IMG_STORAGE_DIR_EXTRA, movieClicked.getImgStorageDir());
+        }
+
+        detailIntent.putExtras(extras);
+
+        startActivity(detailIntent);
+    }
+
+    private void showMoviePosterView() {
+        mErrorMessageDisplay.setVisibility(View.INVISIBLE);
+        mRecyclerView.setVisibility(View.VISIBLE);
+    }
+
+    private void showErrorMessage() {
+        mRecyclerView.setVisibility(View.INVISIBLE);
+        mErrorMessageDisplay.setVisibility(View.VISIBLE);
+    }
+
     public static int calculateNoOfColumns(Context context) {
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
         int noOfColumns = (int) (dpWidth / 180);
         return noOfColumns;
+    }
+
+    public String checkIfInDb(String movieId) {
+        SQLiteDatabase mDb = null;
+        Cursor cursor = null;
+
+        try {
+            FavoriteDbHelper dbHelper = new FavoriteDbHelper(this);
+            mDb = dbHelper.getReadableDatabase();
+
+            String query = "SELECT * FROM " + FavoriteContract.FavoriteEntry.MOVIE_TABLE_NAME +
+                    " WHERE " + FavoriteContract.FavoriteEntry.COLUMN_MOVIE_ID +
+                    " = " + movieId + ";";
+            cursor = mDb.rawQuery(query, null);
+            if (cursor.getCount() <= 0) {
+                cursor.close();
+                return null;
+            }
+
+            cursor.moveToFirst();
+            return cursor.getString(cursor.getColumnIndex(
+                                FavoriteContract.FavoriteEntry.COLUMN_IMAGE_STORAGE_DIR));
+        } catch (SQLiteException e) {
+            Log.e(LOG_TAG, "Error ", e);
+        } finally {
+            cursor.close();
+            mDb.close();
+        }
+
+        return null;
     }
 }

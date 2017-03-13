@@ -1,5 +1,8 @@
 package com.example.android.mymovieapp.loaders;
 
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.support.v4.content.AsyncTaskLoader;
 import android.content.Context;
 import android.net.Uri;
@@ -10,7 +13,9 @@ import android.widget.ProgressBar;
 import com.example.android.mymovieapp.BuildConfig;
 import com.example.android.mymovieapp.DetailActivity;
 import com.example.android.mymovieapp.MovieData;
+import com.example.android.mymovieapp.ReviewData;
 import com.example.android.mymovieapp.TrailerData;
+import com.example.android.mymovieapp.database.FavoriteContract;
 import com.example.android.mymovieapp.database.FavoriteDbHelper;
 
 import org.json.JSONArray;
@@ -36,12 +41,17 @@ public class FetchMovieTrailers extends AsyncTaskLoader<ArrayList<TrailerData>>{
     private ProgressBar mLoadingIndicator;
     private Context context;
     private String movieId;
+    private Boolean isFavorite;
 
-    public FetchMovieTrailers(Context context, ProgressBar mLoadingIndicator, String movieId) {
+    private SQLiteDatabase mDb;
+
+    public FetchMovieTrailers(Context context, ProgressBar mLoadingIndicator, String movieId,
+                              Boolean isFavorite) {
         super(context);
         this.context = context;
         this.mLoadingIndicator = mLoadingIndicator;
         this.movieId = movieId;
+        this.isFavorite = isFavorite;
     }
 
     @Override
@@ -62,65 +72,105 @@ public class FetchMovieTrailers extends AsyncTaskLoader<ArrayList<TrailerData>>{
 
     @Override
     public ArrayList<TrailerData> loadInBackground() {
-        HttpURLConnection urlConnection = null;
-        BufferedReader reader = null;
+        if (isFavorite) {
+            Cursor trailerCursor = null;
+            try {
+                FavoriteDbHelper dbHelper = new FavoriteDbHelper(context);
+                mDb = dbHelper.getReadableDatabase();
+                String trailerQuery = "SELECT * FROM " +
+                        FavoriteContract.FavoriteEntry.TRAILER_TABLE_NAME +
+                        " WHERE " + FavoriteContract.FavoriteEntry.COLUMN_MOVIE_ID +
+                        "=" + movieId;
 
-        String trailerJsonStr = null;
+                trailerCursor = mDb.rawQuery(trailerQuery, null);
 
-        try {
-            final String FILM_BASE_URL = "http://api.themoviedb.org/3/movie/";
+                ArrayList<TrailerData> trailerDatas = new ArrayList<>();
 
-            Uri builtUri = Uri.parse(FILM_BASE_URL).buildUpon()
-                    .appendPath(movieId)
-                    .appendPath("trailers")
-                    .appendQueryParameter("api_key", BuildConfig.TMDB_API_KEY)
-                    .build();
+                while (trailerCursor.moveToNext()) {
+                    TrailerData trailerData = new TrailerData(
+                            trailerCursor.getString(trailerCursor.getColumnIndex(
+                                    FavoriteContract.FavoriteEntry.COLUMN_MOVIE_TRAILER_TITLE)),
+                            trailerCursor.getString(trailerCursor.getColumnIndex(
+                                    FavoriteContract.FavoriteEntry.COLUMN_MOVIE_TRAILER_URL)),
+                            trailerCursor.getString(trailerCursor.getColumnIndex(
+                                    FavoriteContract.FavoriteEntry.COLUMN_MOVIE_TRAILER_TYPE))
+                    );
 
-            URL url = new URL(builtUri.toString());
+                    trailerDatas.add(trailerData);
+                }
 
-            urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setRequestMethod("GET");
-            urlConnection.connect();
-
-            InputStream inputStream = urlConnection.getInputStream();
-            StringBuffer buffer = new StringBuffer();
-            if (inputStream == null) {
-                return null;
-            }
-            reader = new BufferedReader(new InputStreamReader(inputStream));
-
-            String line;
-            while ((line = reader.readLine()) != null) {
-                buffer.append(line + "\n");
-            }
-
-            if (buffer.length() == 0) {
-                return null;
-            }
-
-            trailerJsonStr = buffer.toString();
-        } catch (IOException e) {
-            Log.e(LOG_TAG, "Error ", e);
-            return null;
-        } finally {
-            if (urlConnection != null) {
-                urlConnection.disconnect();
-            }
-
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (final IOException e) {
-                    Log.e(LOG_TAG, "Error closing stream", e);
+                return trailerDatas;
+            } catch (SQLiteException e) {
+                Log.e(LOG_TAG, "Error ", e);
+            } finally {
+                if (trailerCursor != null) {
+                    trailerCursor.close();
+                }
+                if (mDb != null) {
+                    mDb.close();
                 }
             }
-        }
+        } else {
+            HttpURLConnection urlConnection = null;
+            BufferedReader reader = null;
 
-        try {
-            return getTrailerDataFromJson(trailerJsonStr);
-        } catch (JSONException e) {
-            Log.e(LOG_TAG, e.getMessage(), e);
-            e.printStackTrace();
+            String trailerJsonStr = null;
+
+            try {
+                final String FILM_BASE_URL = "http://api.themoviedb.org/3/movie/";
+
+                Uri builtUri = Uri.parse(FILM_BASE_URL).buildUpon()
+                        .appendPath(movieId)
+                        .appendPath("trailers")
+                        .appendQueryParameter("api_key", BuildConfig.TMDB_API_KEY)
+                        .build();
+
+                URL url = new URL(builtUri.toString());
+
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.connect();
+
+                InputStream inputStream = urlConnection.getInputStream();
+                StringBuffer buffer = new StringBuffer();
+                if (inputStream == null) {
+                    return null;
+                }
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    buffer.append(line + "\n");
+                }
+
+                if (buffer.length() == 0) {
+                    return null;
+                }
+
+                trailerJsonStr = buffer.toString();
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "Error ", e);
+                return null;
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (final IOException e) {
+                        Log.e(LOG_TAG, "Error closing stream", e);
+                    }
+                }
+            }
+
+            try {
+                return getTrailerDataFromJson(trailerJsonStr);
+            } catch (JSONException e) {
+                Log.e(LOG_TAG, e.getMessage(), e);
+                e.printStackTrace();
+            }
         }
 
         return null;
