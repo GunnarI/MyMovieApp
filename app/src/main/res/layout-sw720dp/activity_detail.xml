@@ -46,35 +46,41 @@
                 android:layout_marginLeft="@dimen/movie_icon_left_margin"
                 app:layout_constraintTop_toTopOf="@+id/for_negativ_constraint"/>
             <include
+                android:id="@+id/detail_yearstarreviews_fraction"
                 layout="@layout/detail_yearstarreviews_fraction"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/view_spacing_vertical_1"
+                android:layout_marginStart="@dimen/view_spacing_horizontal_1"
                 android:layout_marginTop="@dimen/view_spacing_horizontal_1"
-                android:layout_marginLeft="@dimen/view_spacing_vertical_1"
+                android:layout_marginLeft="@dimen/view_spacing_horizontal_1"
                 app:layout_constraintTop_toBottomOf="@+id/movie_title"
                 app:layout_constraintLeft_toRightOf="@+id/movie_thumbnail" />
             <TextView
                 android:id="@+id/movie_description"
-                tools:text="@string/lorum_ipsum_mockup_long"
+                tools:text="@string/lorum_ipsum_mockup_short"
+                android:textSize="@dimen/text_size_small"
                 android:layout_width="@dimen/zero_size"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/view_spacing_vertical_2"
-                app:layout_constraintTop_toBottomOf="@+id/movie_thumbnail"
+                android:minHeight="@dimen/desc_min_height"
+                android:layout_marginTop="@dimen/view_spacing_horizontal_1"
+                app:layout_constraintTop_toBottomOf="@+id/movie_title"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                app:layout_constraintLeft_toLeftOf="parent"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                app:layout_constraintLeft_toRightOf="@id/detail_yearstarreviews_fraction"
+                android:layout_marginRight="@dimen/desc_land_right_margin"
                 app:layout_constraintRight_toRightOf="parent"
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:layout_marginEnd="@dimen/activity_horizontal_margin" />
+                android:layout_marginEnd="@dimen/desc_land_right_margin"/>
             <include
+                android:id="@+id/detail_trailer_fraction"
                 layout="@layout/detail_trailer_fraction"
                 android:layout_width="@dimen/zero_size"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/divider_vertical_spacing"
+                android:layout_marginTop="@dimen/view_spacing_vertical_2"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
                 app:layout_constraintTop_toBottomOf="@+id/movie_description"
-                app:layout_constraintStart_toStartOf="@id/movie_description"
-                app:layout_constraintEnd_toEndOf="@id/movie_description"/>
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
 
         </android.support.constraint.ConstraintLayout>
     </ScrollView>
@@ -83,5 +89,8 @@
         android:id="@+id/detail_floating_items"
         layout="@layout/detail_floating_items"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 </RelativeLayout>

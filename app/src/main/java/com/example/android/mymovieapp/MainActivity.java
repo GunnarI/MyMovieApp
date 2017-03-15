@@ -43,15 +43,25 @@ public class MainActivity extends AppCompatActivity implements
     private TextView mErrorMessageDisplay;
     private ProgressBar mLoadingIndicator;
 
-    private Boolean mIsFavorite = false;
+    private ArrayList<String> movieIdToRemoveFav = new ArrayList<>();
+    private ArrayList<String> movieIdToToggleFav = new ArrayList<>();
+    private String mOrderby;
+    private static final String ORDER_BY_TOP_RATED = "top_rated";
+    private static final String ORDER_BY_POPULAR = "popular";
+    private static final String ORDER_BY_MY_FAVORITE = "my_favorite";
 
     private static final int POSTER_LOADER_ID = 0;
 
     private static final String MOVIE_DETAIL_EXTRA = "MovieDetail";
-    private static final String TRAILER_DETAIL_EXTRA = "TrailerDetail";
-    private static final String REVIEW_DETAIL_EXTRA = "ReviewDetail";
     private static final String IS_FAVORITE_EXTRA = "IsFavorite";
     private static final String IMG_STORAGE_DIR_EXTRA = "StorageDir";
+
+    private static final String ORDER_BY_EXTRA = "orderByKey";
+    private static final String MOVIE_CHANGED_EXTRA = "movieChanged";
+    private int movieRemovedPosition = -1;
+    private int movieUnfavoritedPosition = -1;
+
+    private static final int DETAIL_ACTIVITY_REQUEST_CODE = 11;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements
         GridLayoutManager layoutManager
                 = new GridLayoutManager(
                     this,
-                    calculateNoOfColumns(getBaseContext()), // TODO : Check for better ways to calculate so that each row is filled
+                    calculateNoOfColumns(getBaseContext()),
                     GridLayoutManager.VERTICAL,
                     false);
         mRecyclerView.setLayoutManager(layoutManager);
@@ -118,32 +128,29 @@ public class MainActivity extends AppCompatActivity implements
 
     private void loadMovieData() {
         int loaderId = POSTER_LOADER_ID;
-        Bundle bundleForLoader = null;
         LoaderCallbacks<ArrayList<MovieData>> callbacks = MainActivity.this;
 
         showMoviePosterView();
 
-        getSupportLoaderManager().initLoader(loaderId, bundleForLoader, callbacks);
+        getSupportLoaderManager().initLoader(loaderId, null, callbacks);
     }
 
     @Override
     public Loader<ArrayList<MovieData>> onCreateLoader(int id, Bundle args) {
         SharedPreferences prefsLoc = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        String orderby = prefsLoc.getString(
+        mOrderby = prefsLoc.getString(
                 getString(R.string.orderby_key),
                 getString(R.string.pref_orderby_pop));
 
-        ArrayList<MovieData> mMovieData = null;
-
-        if (orderby.equals(getString(R.string.pref_orderby_rate))) {
-            orderby = "top_rated";
-        } else if (orderby.equals(getString(R.string.pref_orderby_pop))) {
-            orderby = "popular";
-        } else if (orderby.equals(getString(R.string.pref_orderby_fav))) {
-            orderby = "my_favorite";
+        if (mOrderby.equals(getString(R.string.pref_orderby_rate))) {
+            mOrderby = ORDER_BY_TOP_RATED;
+        } else if (mOrderby.equals(getString(R.string.pref_orderby_pop))) {
+            mOrderby = ORDER_BY_POPULAR;
+        } else if (mOrderby.equals(getString(R.string.pref_orderby_fav))) {
+            mOrderby = ORDER_BY_MY_FAVORITE;
         }
 
-        return new FetchMoviesTask(MainActivity.this, mLoadingIndicator, orderby);
+        return new FetchMoviesTask(MainActivity.this, mLoadingIndicator, mOrderby);
     }
 
     @Override
@@ -172,7 +179,7 @@ public class MainActivity extends AppCompatActivity implements
 
         // If we are using top rated or popular as orderby then the movie is not marked as favorite
         // so we will have to search the db to see if it is actually favorited.
-        if (!movieClicked.getIsFavorite()) {
+        if (!mOrderby.equals(ORDER_BY_MY_FAVORITE)) {
             String imgSource = checkIfInDb(movieClicked.getId());
             if(imgSource != null) {
                 movieClicked.setIsFavorite(true);
@@ -191,7 +198,73 @@ public class MainActivity extends AppCompatActivity implements
 
         detailIntent.putExtras(extras);
 
-        startActivity(detailIntent);
+        if (movieClicked.getIsFavorite()) {
+            startActivityForResult(detailIntent, DETAIL_ACTIVITY_REQUEST_CODE);
+        } else {
+            startActivity(detailIntent);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode,
+                                    Intent data) {
+        if (requestCode == DETAIL_ACTIVITY_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                final String movieId = data.getStringExtra("DetailExtra");
+
+                if (mOrderby.equals(ORDER_BY_MY_FAVORITE)) {
+                    movieRemovedPosition = mPosterAdapter.removeMovieFromList(movieId);
+                    if (movieRemovedPosition >= 0) {
+                        movieIdToRemoveFav.add(movieId);
+                        mPosterAdapter.notifyItemRemoved(movieRemovedPosition);
+                    }
+                } else {
+                    movieUnfavoritedPosition = mPosterAdapter.setMovieFavValue(movieId, false);
+                    if (movieUnfavoritedPosition >= 0) {
+                        movieIdToToggleFav.add(movieId);
+                        mPosterAdapter.notifyItemChanged(movieUnfavoritedPosition);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        mOrderby = savedInstanceState.getString(ORDER_BY_EXTRA);
+        if (mOrderby.equals(ORDER_BY_MY_FAVORITE)) {
+            movieIdToRemoveFav = savedInstanceState.getStringArrayList(MOVIE_CHANGED_EXTRA);
+            if (movieIdToRemoveFav != null) {
+                for (String movieId : movieIdToRemoveFav) {
+                    movieRemovedPosition = mPosterAdapter.removeMovieFromList(movieId);
+                    if (movieRemovedPosition >= 0) {
+                        mPosterAdapter.notifyItemRemoved(movieRemovedPosition);
+                    }
+                }
+            }
+        } else {
+            movieIdToToggleFav = savedInstanceState.getStringArrayList(MOVIE_CHANGED_EXTRA);
+            if (movieIdToToggleFav != null) {
+                for (String movieId : movieIdToToggleFav) {
+                    movieUnfavoritedPosition = mPosterAdapter.setMovieFavValue(movieId, false);
+                    if (movieUnfavoritedPosition >= 0) {
+                        mPosterAdapter.notifyItemChanged(movieUnfavoritedPosition);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        if (mOrderby.equals(ORDER_BY_MY_FAVORITE)) {
+            outState.putStringArrayList(MOVIE_CHANGED_EXTRA, movieIdToRemoveFav);
+        } else {
+            outState.putStringArrayList(MOVIE_CHANGED_EXTRA, movieIdToToggleFav);
+        }
+        outState.putString(ORDER_BY_EXTRA, mOrderby);
+        super.onSaveInstanceState(outState);
     }
 
     private void showMoviePosterView() {

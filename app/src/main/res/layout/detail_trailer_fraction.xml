@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <ImageView
+        android:id="@+id/divider"
+        android:background="@color/colorPrimaryLight"
+        android:layout_height="2dp"
+        android:layout_width="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginStart="@dimen/divider_horizontal_spacing"
+        android:layout_marginRight="@dimen/divider_horizontal_spacing"
+        android:layout_marginEnd="@dimen/divider_horizontal_spacing" />
+    <TextView
+        android:id="@+id/trailer_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/trailer_header"
+        android:textSize="@dimen/text_size_medium"
+        android:textColor="@color/colorBlack"
+        android:layout_marginTop="@dimen/divider_vertical_spacing"
+        app:layout_constraintTop_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteX="16dp" />
+    <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/trailer_header"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerview_trailers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/view_spacing_vertical_3"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin" />
+        <TextView
+            android:id="@+id/trailers_error_message_display"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/padding_err_message"
+            android:text="@string/error_message_trailers"
+            android:textSize="@dimen/text_size_large"
+            android:visibility="invisible" />
+        <ProgressBar
+            android:id="@+id/pb_trailer_loading_indicator"
+            android:layout_height="@dimen/progress_bar_dim"
+            android:layout_width="@dimen/progress_bar_dim"
+            android:layout_gravity="center"
+            android:visibility="invisible" />
+    </FrameLayout>
+</android.support.constraint.ConstraintLayout>

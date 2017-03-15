@@ -1,5 +1,6 @@
 package com.example.android.mymovieapp;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
@@ -13,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -39,11 +41,6 @@ import com.squareup.picasso.Target;
  * Created by gunnaringi on 2017-02-02.
  */
 
-// TODO : activity_detail.xml has a field with movie duration but to get this we need to make
-    //      a new call to the api for a specific movie:
-    //      http://api.themoviedb.org/3/movie/movie_id?api_key=my_api_key
-    //      Need to decide wheather we should delete the field or make the call
-
 public class DetailActivity extends AppCompatActivity implements
         TrailerAdapterOnClickHandler {
 
@@ -66,6 +63,8 @@ public class DetailActivity extends AppCompatActivity implements
     private RecyclerView mRecyclerView;
     private TextView mErrorMessageDisplay;
     private ProgressBar mLoadingIndicatorForDb;
+
+    private Boolean isStartedForResult;
 
     private static final int TRAILER_LOADER_ID = 1;
     private static final int INSERT_INTO_DATABASE_LOADER_ID = 2;
@@ -165,9 +164,11 @@ public class DetailActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle("Details");
         setContentView(R.layout.activity_detail);
 
         Intent intentThatStartedThisActivity = getIntent();
+        isStartedForResult = (getCallingActivity() != null);
 
         mMovieTitle = (TextView) findViewById(R.id.movie_title);
         mMovieThumbnail = (ImageView) findViewById(R.id.movie_thumbnail);
@@ -189,6 +190,7 @@ public class DetailActivity extends AppCompatActivity implements
 
             if (extras.containsKey(MOVIE_DETAIL_EXTRA)) {
                 mMovieData = extras.getParcelable(MOVIE_DETAIL_EXTRA);
+
                 mMovieData.setIsFavorite(extras.getBoolean(IS_FAVORITE_EXTRA));
 
                 mMovieTitle.setText(mMovieData.getTitle());
@@ -200,33 +202,33 @@ public class DetailActivity extends AppCompatActivity implements
                 switch (ratingStars[0]) {
                     case 5:
                         Picasso.with(this)
-                                .load(R.drawable.full_star)
+                                .load(R.mipmap.full_star)
                                 .into(mMovieRatingStar1);
                         Picasso.with(this)
-                                .load(R.drawable.full_star)
+                                .load(R.mipmap.full_star)
                                 .into(mMovieRatingStar2);
                         Picasso.with(this)
-                                .load(R.drawable.full_star)
+                                .load(R.mipmap.full_star)
                                 .into(mMovieRatingStar3);
                         Picasso.with(this)
-                                .load(R.drawable.full_star)
+                                .load(R.mipmap.full_star)
                                 .into(mMovieRatingStar4);
                         Picasso.with(this)
-                                .load(R.drawable.full_star)
+                                .load(R.mipmap.full_star)
                                 .into(mMovieRatingStar5);
                         break;
                     case 4:
                         Picasso.with(this)
-                                .load(R.drawable.full_star)
+                                .load(R.mipmap.full_star)
                                 .into(mMovieRatingStar1);
                         Picasso.with(this)
-                                .load(R.drawable.full_star)
+                                .load(R.mipmap.full_star)
                                 .into(mMovieRatingStar2);
                         Picasso.with(this)
-                                .load(R.drawable.full_star)
+                                .load(R.mipmap.full_star)
                                 .into(mMovieRatingStar3);
                         Picasso.with(this)
-                                .load(R.drawable.full_star)
+                                .load(R.mipmap.full_star)
                                 .into(mMovieRatingStar4);
                         Picasso.with(this)
                                 .load(ratingStars[1])
@@ -234,70 +236,70 @@ public class DetailActivity extends AppCompatActivity implements
                         break;
                     case 3:
                         Picasso.with(this)
-                                .load(R.drawable.full_star)
+                                .load(R.mipmap.full_star)
                                 .into(mMovieRatingStar1);
                         Picasso.with(this)
-                                .load(R.drawable.full_star)
+                                .load(R.mipmap.full_star)
                                 .into(mMovieRatingStar2);
                         Picasso.with(this)
-                                .load(R.drawable.full_star)
+                                .load(R.mipmap.full_star)
                                 .into(mMovieRatingStar3);
                         Picasso.with(this)
                                 .load(ratingStars[1])
                                 .into(mMovieRatingStar4);
                         Picasso.with(this)
-                                .load(R.drawable.empty_star)
+                                .load(R.mipmap.empty_star)
                                 .into(mMovieRatingStar5);
                         break;
                     case 2:
                         Picasso.with(this)
-                                .load(R.drawable.full_star)
+                                .load(R.mipmap.full_star)
                                 .into(mMovieRatingStar1);
                         Picasso.with(this)
-                                .load(R.drawable.full_star)
+                                .load(R.mipmap.full_star)
                                 .into(mMovieRatingStar2);
                         Picasso.with(this)
                                 .load(ratingStars[1])
                                 .into(mMovieRatingStar3);
                         Picasso.with(this)
-                                .load(R.drawable.empty_star)
+                                .load(R.mipmap.empty_star)
                                 .into(mMovieRatingStar4);
                         Picasso.with(this)
-                                .load(R.drawable.empty_star)
+                                .load(R.mipmap.empty_star)
                                 .into(mMovieRatingStar5);
                         break;
                     case 1:
                         Picasso.with(this)
-                                .load(R.drawable.full_star)
+                                .load(R.mipmap.full_star)
                                 .into(mMovieRatingStar1);
                         Picasso.with(this)
                                 .load(ratingStars[1])
                                 .into(mMovieRatingStar2);
                         Picasso.with(this)
-                                .load(R.drawable.empty_star)
+                                .load(R.mipmap.empty_star)
                                 .into(mMovieRatingStar3);
                         Picasso.with(this)
-                                .load(R.drawable.empty_star)
+                                .load(R.mipmap.empty_star)
                                 .into(mMovieRatingStar4);
                         Picasso.with(this)
-                                .load(R.drawable.empty_star)
+                                .load(R.mipmap.empty_star)
                                 .into(mMovieRatingStar5);
                         break;
                     case 0:
                         Picasso.with(this)
-                                .load(R.drawable.empty_star)
+                                .load(R.mipmap.empty_star)
                                 .into(mMovieRatingStar1);
                         Picasso.with(this)
-                                .load(R.drawable.empty_star)
+                                .load(R.mipmap.empty_star)
                                 .into(mMovieRatingStar2);
                         Picasso.with(this)
-                                .load(R.drawable.empty_star)
+                                .load(R.mipmap.empty_star)
                                 .into(mMovieRatingStar3);
                         Picasso.with(this)
-                                .load(R.drawable.empty_star)
+                                .load(R.mipmap.empty_star)
                                 .into(mMovieRatingStar4);
                         Picasso.with(this)
-                                .load(R.drawable.empty_star)
+                                .load(R.mipmap.empty_star)
                                 .into(mMovieRatingStar5);
                         break;
                 }
@@ -306,11 +308,6 @@ public class DetailActivity extends AppCompatActivity implements
 
                 final FloatingActionButton mFavButton =
                         (FloatingActionButton) findViewById(R.id.favorite_button);
-
-                LinearLayoutManager layoutManager =
-                        new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-                mRecyclerView.setLayoutManager(layoutManager);
-                mTrailerAdapter = new TrailerAdapter(this);
 
                 if (mMovieData.getIsFavorite()) {
                     if (extras.containsKey(TRAILER_DETAIL_EXTRA)) {
@@ -350,9 +347,7 @@ public class DetailActivity extends AppCompatActivity implements
                         }
                     });
 
-                    mFavButton.setImageResource(R.drawable.full_star);
-
-                    mTrailerAdapter.setImgStorageDir(mMovieData.getImgStorageDir());
+                    mFavButton.setImageResource(R.mipmap.full_star);
                 } else {
                     Picasso.with(this)
                             .load("http://image.tmdb.org/t/p/w500" + mMovieData.getImgUrl())
@@ -374,30 +369,76 @@ public class DetailActivity extends AppCompatActivity implements
                             startActivityForResult(reviewsIntent, REVIEWS_ACTIVITY_REQUEST_CODE);
                         }
                     });
+
+                    mFavButton.setImageResource(R.mipmap.empty_star);
                 }
 
                 mFavButton.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
                         if (mMovieData.getIsFavorite()) {
                             mMovieData.setIsFavorite(false);
-                            mFavButton.setImageResource(R.drawable.empty_star);
+                            mFavButton.setImageResource(R.mipmap.empty_star);
 
                             deleteMovieFromDatabase();
                         } else {
                             mMovieData.setIsFavorite(true);
-                            mFavButton.setImageResource(R.drawable.full_star);
+                            mFavButton.setImageResource(R.mipmap.full_star);
 
                             insertMovieIntoDatabase();
                         }
                     }
                 });
 
-
+                final LinearLayoutManager layoutManager =
+                        new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+                mRecyclerView.setLayoutManager(layoutManager);
+                mTrailerAdapter = new TrailerAdapter(this);
+                if (mMovieData.getIsFavorite()) {
+                    mTrailerAdapter.setImgStorageDir(mMovieData.getImgStorageDir());
+                }
                 mRecyclerView.setAdapter(mTrailerAdapter);
 
                 loadTrailerData();
             }
         }
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        Boolean isFavorite = savedInstanceState.getBoolean(IS_FAVORITE_EXTRA);
+        if (isFavorite) {
+            mMovieData.setIsFavorite(true);
+            FloatingActionButton mFavButton =
+                    (FloatingActionButton) findViewById(R.id.favorite_button);
+            mFavButton.setImageResource(R.mipmap.full_star);
+        } else {
+            mMovieData.setIsFavorite(false);
+            FloatingActionButton mFavButton =
+                    (FloatingActionButton) findViewById(R.id.favorite_button);
+            mFavButton.setImageResource(R.mipmap.empty_star);
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean(IS_FAVORITE_EXTRA, mMovieData.getIsFavorite());
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (isStartedForResult) {
+            if (!mMovieData.getIsFavorite()) {
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra("DetailExtra", mMovieData.getId());
+
+                setResult(Activity.RESULT_OK, resultIntent);
+            }
+        }
+
+        this.finish();
+        return true;
     }
 
     @Override
@@ -452,16 +493,16 @@ public class DetailActivity extends AppCompatActivity implements
 
         switch (partialStar) {
             case 0:
-                ratingStars[1] = R.drawable.empty_star;
+                ratingStars[1] = R.mipmap.empty_star;
                 break;
             case 1:
-                ratingStars[1] = R.drawable.quarter_star;
+                ratingStars[1] = R.mipmap.quarter_star;
                 break;
             case 2:
-                ratingStars[1] = R.drawable.half_star;
+                ratingStars[1] = R.mipmap.half_star;
                 break;
             case 3:
-                ratingStars[1] = R.drawable.three_quarter_star;
+                ratingStars[1] = R.mipmap.three_quarter_star;
                 break;
             default:
                 break;
@@ -511,11 +552,6 @@ public class DetailActivity extends AppCompatActivity implements
                     trailerImgDeleted = false;
                 }
             }
-        }
-        if (posterImgDeleted && trailerImgDeleted) {
-            Log.i(LOG_TAG, "Images successfully deleted");
-        } else {
-            Log.i(LOG_TAG, "Images not deleted for some reason");
         }
 
         int loaderId = DELETE_FROM_DATABASE_LOADER_ID;

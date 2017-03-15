@@ -76,7 +76,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
 
             Picasso.with((Context) mClickHandler)
                     .load(f)
-                    .placeholder(R.drawable.play_button)
+                    .placeholder(R.mipmap.play_button)
                     .into(trailerAdapterViewHolder.mTrailerThumbnail);
         } else {
             String url = "http://img.youtube.com/vi/"
@@ -84,7 +84,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
                     + "/0.jpg";
             Picasso.with((Context) mClickHandler)
                     .load(url)
-                    .placeholder(R.drawable.play_button)
+                    .placeholder(R.mipmap.play_button)
                     .into(trailerAdapterViewHolder.mTrailerThumbnail);
         }
 

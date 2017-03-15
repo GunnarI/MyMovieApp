@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/movie_rel_date"
+        tools:text="@string/rel_date_mockup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/text_size_large"
+        android:textColor="@color/colorBlack"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="parent" />
+    <ImageView
+        android:id="@+id/star_icon_1"
+        android:layout_width="@dimen/star_icon_dim"
+        android:layout_height="@dimen/star_icon_dim"
+        app:srcCompat="@mipmap/full_star"
+        app:layout_constraintLeft_toLeftOf="@+id/movie_rel_date"
+        android:layout_marginTop="@dimen/view_spacing_vertical_2"
+        app:layout_constraintTop_toBottomOf="@+id/movie_rel_date" />
+    <ImageView
+        android:id="@+id/star_icon_2"
+        android:layout_width="@dimen/star_icon_dim"
+        android:layout_height="@dimen/star_icon_dim"
+        app:srcCompat="@mipmap/full_star"
+        app:layout_constraintLeft_toRightOf="@+id/star_icon_1"
+        android:layout_marginLeft="@dimen/star_icon_spacing"
+        app:layout_constraintBottom_toBottomOf="@+id/star_icon_1"
+        android:layout_marginStart="@dimen/star_icon_spacing" />
+    <ImageView
+        android:id="@+id/star_icon_3"
+        android:layout_width="@dimen/star_icon_dim"
+        android:layout_height="@dimen/star_icon_dim"
+        app:srcCompat="@mipmap/full_star"
+        app:layout_constraintLeft_toRightOf="@+id/star_icon_2"
+        android:layout_marginLeft="@dimen/star_icon_spacing"
+        app:layout_constraintBottom_toBottomOf="@+id/star_icon_2"
+        android:layout_marginStart="@dimen/star_icon_spacing" />
+    <ImageView
+        android:id="@+id/star_icon_4"
+        android:layout_width="@dimen/star_icon_dim"
+        android:layout_height="@dimen/star_icon_dim"
+        app:srcCompat="@mipmap/three_quarter_star"
+        app:layout_constraintLeft_toRightOf="@+id/star_icon_3"
+        android:layout_marginLeft="@dimen/star_icon_spacing"
+        app:layout_constraintBottom_toBottomOf="@+id/star_icon_3"
+        android:layout_marginStart="@dimen/star_icon_spacing" />
+    <ImageView
+        android:id="@+id/star_icon_5"
+        android:layout_width="@dimen/star_icon_dim"
+        android:layout_height="@dimen/star_icon_dim"
+        app:srcCompat="@mipmap/empty_star"
+        app:layout_constraintLeft_toRightOf="@+id/star_icon_4"
+        android:layout_marginLeft="@dimen/star_icon_spacing"
+        app:layout_constraintBottom_toBottomOf="@+id/star_icon_4"
+        android:layout_marginStart="@dimen/star_icon_spacing" />
+    <Button
+        android:id="@+id/review_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/button_reviews"
+        android:textSize="@dimen/text_size_small"
+        android:background="@color/colorPrimary"
+        android:padding="@dimen/review_button_padding"
+        app:layout_constraintLeft_toLeftOf="@+id/movie_rel_date"
+        android:layout_marginTop="@dimen/view_spacing_vertical_3"
+        app:layout_constraintTop_toBottomOf="@+id/star_icon_1" />
+</android.support.constraint.ConstraintLayout>

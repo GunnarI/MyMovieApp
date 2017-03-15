@@ -76,7 +76,7 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterAdap
 
             Picasso.with((Context) mClickHandler)
                     .load(uri)
-                    .placeholder(R.drawable.imagenotfound_icon)
+                    .placeholder(R.mipmap.imagenotfound_icon)
                     .into(posterAdapterViewHolder.mPosterImageView);
         } else {
             String uri = "http://image.tmdb.org/t/p/"
@@ -85,7 +85,7 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterAdap
             
             Picasso.with((Context) mClickHandler)
                     .load(uri)
-                    .placeholder(R.drawable.imagenotfound_icon)
+                    .placeholder(R.mipmap.imagenotfound_icon)
                     .into(posterAdapterViewHolder.mPosterImageView);
         }
     }
@@ -99,5 +99,29 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterAdap
     public void setMovieData(ArrayList<MovieData> moviesData) {
         mMoviesData = new ArrayList(moviesData);
         notifyDataSetChanged();
+    }
+
+    public int removeMovieFromList(String movieId) {
+        for (int i = 0; i < mMoviesData.size(); i++) {
+            if (mMoviesData.get(i).getId().equals(movieId)) {
+                mMoviesData.remove(i);
+
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    public int setMovieFavValue(String movieId, boolean favValue) {
+        for (int i = 0; i < mMoviesData.size(); i++) {
+            if (mMoviesData.get(i).getId().equals(movieId)) {
+                mMoviesData.get(i).setIsFavorite(favValue);
+
+                return i;
+            }
+        }
+
+        return -1;
     }
 }

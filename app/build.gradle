@@ -21,6 +21,8 @@ android {
             it.buildConfigField "String", "TMDB_API_KEY", getMyApiKey("myApiKey")
         }
     }
+
+    dataBinding.enabled = true;
 }
 
 repositories {
