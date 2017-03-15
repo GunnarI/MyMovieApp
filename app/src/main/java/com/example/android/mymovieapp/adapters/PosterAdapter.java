@@ -76,7 +76,7 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterAdap
 
             Picasso.with((Context) mClickHandler)
                     .load(uri)
-                    .placeholder(R.drawable.imagenotfound_icon)
+                    .placeholder(R.mipmap.imagenotfound_icon)
                     .into(posterAdapterViewHolder.mPosterImageView);
         } else {
             String uri = "http://image.tmdb.org/t/p/"
@@ -85,7 +85,7 @@ public class PosterAdapter extends RecyclerView.Adapter<PosterAdapter.PosterAdap
             
             Picasso.with((Context) mClickHandler)
                     .load(uri)
-                    .placeholder(R.drawable.imagenotfound_icon)
+                    .placeholder(R.mipmap.imagenotfound_icon)
                     .into(posterAdapterViewHolder.mPosterImageView);
         }
     }

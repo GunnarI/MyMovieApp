@@ -207,33 +207,33 @@ public class DetailActivity extends AppCompatActivity implements
                 switch (ratingStars[0]) {
                     case 5:
                         Picasso.with(this)
-                                .load(R.drawable.full_star)
+                                .load(R.mipmap.full_star)
                                 .into(mMovieRatingStar1);
                         Picasso.with(this)
-                                .load(R.drawable.full_star)
+                                .load(R.mipmap.full_star)
                                 .into(mMovieRatingStar2);
                         Picasso.with(this)
-                                .load(R.drawable.full_star)
+                                .load(R.mipmap.full_star)
                                 .into(mMovieRatingStar3);
                         Picasso.with(this)
-                                .load(R.drawable.full_star)
+                                .load(R.mipmap.full_star)
                                 .into(mMovieRatingStar4);
                         Picasso.with(this)
-                                .load(R.drawable.full_star)
+                                .load(R.mipmap.full_star)
                                 .into(mMovieRatingStar5);
                         break;
                     case 4:
                         Picasso.with(this)
-                                .load(R.drawable.full_star)
+                                .load(R.mipmap.full_star)
                                 .into(mMovieRatingStar1);
                         Picasso.with(this)
-                                .load(R.drawable.full_star)
+                                .load(R.mipmap.full_star)
                                 .into(mMovieRatingStar2);
                         Picasso.with(this)
-                                .load(R.drawable.full_star)
+                                .load(R.mipmap.full_star)
                                 .into(mMovieRatingStar3);
                         Picasso.with(this)
-                                .load(R.drawable.full_star)
+                                .load(R.mipmap.full_star)
                                 .into(mMovieRatingStar4);
                         Picasso.with(this)
                                 .load(ratingStars[1])
@@ -241,70 +241,70 @@ public class DetailActivity extends AppCompatActivity implements
                         break;
                     case 3:
                         Picasso.with(this)
-                                .load(R.drawable.full_star)
+                                .load(R.mipmap.full_star)
                                 .into(mMovieRatingStar1);
                         Picasso.with(this)
-                                .load(R.drawable.full_star)
+                                .load(R.mipmap.full_star)
                                 .into(mMovieRatingStar2);
                         Picasso.with(this)
-                                .load(R.drawable.full_star)
+                                .load(R.mipmap.full_star)
                                 .into(mMovieRatingStar3);
                         Picasso.with(this)
                                 .load(ratingStars[1])
                                 .into(mMovieRatingStar4);
                         Picasso.with(this)
-                                .load(R.drawable.empty_star)
+                                .load(R.mipmap.empty_star)
                                 .into(mMovieRatingStar5);
                         break;
                     case 2:
                         Picasso.with(this)
-                                .load(R.drawable.full_star)
+                                .load(R.mipmap.full_star)
                                 .into(mMovieRatingStar1);
                         Picasso.with(this)
-                                .load(R.drawable.full_star)
+                                .load(R.mipmap.full_star)
                                 .into(mMovieRatingStar2);
                         Picasso.with(this)
                                 .load(ratingStars[1])
                                 .into(mMovieRatingStar3);
                         Picasso.with(this)
-                                .load(R.drawable.empty_star)
+                                .load(R.mipmap.empty_star)
                                 .into(mMovieRatingStar4);
                         Picasso.with(this)
-                                .load(R.drawable.empty_star)
+                                .load(R.mipmap.empty_star)
                                 .into(mMovieRatingStar5);
                         break;
                     case 1:
                         Picasso.with(this)
-                                .load(R.drawable.full_star)
+                                .load(R.mipmap.full_star)
                                 .into(mMovieRatingStar1);
                         Picasso.with(this)
                                 .load(ratingStars[1])
                                 .into(mMovieRatingStar2);
                         Picasso.with(this)
-                                .load(R.drawable.empty_star)
+                                .load(R.mipmap.empty_star)
                                 .into(mMovieRatingStar3);
                         Picasso.with(this)
-                                .load(R.drawable.empty_star)
+                                .load(R.mipmap.empty_star)
                                 .into(mMovieRatingStar4);
                         Picasso.with(this)
-                                .load(R.drawable.empty_star)
+                                .load(R.mipmap.empty_star)
                                 .into(mMovieRatingStar5);
                         break;
                     case 0:
                         Picasso.with(this)
-                                .load(R.drawable.empty_star)
+                                .load(R.mipmap.empty_star)
                                 .into(mMovieRatingStar1);
                         Picasso.with(this)
-                                .load(R.drawable.empty_star)
+                                .load(R.mipmap.empty_star)
                                 .into(mMovieRatingStar2);
                         Picasso.with(this)
-                                .load(R.drawable.empty_star)
+                                .load(R.mipmap.empty_star)
                                 .into(mMovieRatingStar3);
                         Picasso.with(this)
-                                .load(R.drawable.empty_star)
+                                .load(R.mipmap.empty_star)
                                 .into(mMovieRatingStar4);
                         Picasso.with(this)
-                                .load(R.drawable.empty_star)
+                                .load(R.mipmap.empty_star)
                                 .into(mMovieRatingStar5);
                         break;
                 }
@@ -352,7 +352,7 @@ public class DetailActivity extends AppCompatActivity implements
                         }
                     });
 
-                    mFavButton.setImageResource(R.drawable.full_star);
+                    mFavButton.setImageResource(R.mipmap.full_star);
                 } else {
                     Picasso.with(this)
                             .load("http://image.tmdb.org/t/p/w500" + mMovieData.getImgUrl())
@@ -375,19 +375,19 @@ public class DetailActivity extends AppCompatActivity implements
                         }
                     });
 
-                    mFavButton.setImageResource(R.drawable.empty_star);
+                    mFavButton.setImageResource(R.mipmap.empty_star);
                 }
 
                 mFavButton.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
                         if (mMovieData.getIsFavorite()) {
                             mMovieData.setIsFavorite(false);
-                            mFavButton.setImageResource(R.drawable.empty_star);
+                            mFavButton.setImageResource(R.mipmap.empty_star);
 
                             deleteMovieFromDatabase();
                         } else {
                             mMovieData.setIsFavorite(true);
-                            mFavButton.setImageResource(R.drawable.full_star);
+                            mFavButton.setImageResource(R.mipmap.full_star);
 
                             insertMovieIntoDatabase();
                         }
@@ -416,12 +416,12 @@ public class DetailActivity extends AppCompatActivity implements
             mMovieData.setIsFavorite(true);
             FloatingActionButton mFavButton =
                     (FloatingActionButton) findViewById(R.id.favorite_button);
-            mFavButton.setImageResource(R.drawable.full_star);
+            mFavButton.setImageResource(R.mipmap.full_star);
         } else {
             mMovieData.setIsFavorite(false);
             FloatingActionButton mFavButton =
                     (FloatingActionButton) findViewById(R.id.favorite_button);
-            mFavButton.setImageResource(R.drawable.empty_star);
+            mFavButton.setImageResource(R.mipmap.empty_star);
         }
     }
 
@@ -498,16 +498,16 @@ public class DetailActivity extends AppCompatActivity implements
 
         switch (partialStar) {
             case 0:
-                ratingStars[1] = R.drawable.empty_star;
+                ratingStars[1] = R.mipmap.empty_star;
                 break;
             case 1:
-                ratingStars[1] = R.drawable.quarter_star;
+                ratingStars[1] = R.mipmap.quarter_star;
                 break;
             case 2:
-                ratingStars[1] = R.drawable.half_star;
+                ratingStars[1] = R.mipmap.half_star;
                 break;
             case 3:
-                ratingStars[1] = R.drawable.three_quarter_star;
+                ratingStars[1] = R.mipmap.three_quarter_star;
                 break;
             default:
                 break;
