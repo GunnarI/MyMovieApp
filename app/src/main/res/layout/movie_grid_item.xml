@@ -4,13 +4,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="200dp"
     android:orientation="vertical">
 
     <ImageView
         android:id="@+id/poster_image"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:minHeight="@dimen/poster_min_height"
         android:scaleType="centerCrop"/>
 
 </android.support.v7.widget.CardView>

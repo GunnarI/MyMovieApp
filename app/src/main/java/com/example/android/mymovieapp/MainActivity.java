@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements
         GridLayoutManager layoutManager
                 = new GridLayoutManager(
                     this,
-                    calculateNoOfColumns(getBaseContext()), // TODO : Check for better ways to calculate so that each row is filled
+                    calculateNoOfColumns(getBaseContext()),
                     GridLayoutManager.VERTICAL,
                     false);
         mRecyclerView.setLayoutManager(layoutManager);

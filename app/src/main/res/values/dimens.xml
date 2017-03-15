@@ -5,16 +5,23 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 
+    <!-- Main view poster dimensions -->
+    <dimen name="poster_min_height">300dp</dimen>
+
+    <!-- Detail view title dimensions -->
     <dimen name="detail_title_height">180dp</dimen>
     <dimen name="detail_title_padding">32dp</dimen>
 
     <dimen name="negative_spacing_size">40dp</dimen>
 
     <!-- Detail view movie poster thumbnail -->
-    <dimen name="movie_icon_top_margin">120dp</dimen>
     <dimen name="movie_icon_width">150dp</dimen>
     <dimen name="movie_icon_height">220dp</dimen>
     <dimen name="movie_icon_left_margin">24dp</dimen>
+
+    <!-- Detail view description dimensions -->
+    <dimen name="desc_min_height">200dp</dimen>
+    <dimen name="desc_land_right_margin">@dimen/movie_icon_left_margin</dimen>
 
     <!-- Trailer thumbnail dimensions -->
     <dimen name="trailer_thumb_width">100dp</dimen>
@@ -25,6 +32,9 @@
     <!-- Detail view star icon sizes -->
     <dimen name="star_icon_dim">20dp</dimen>
     <dimen name="star_icon_spacing">4dp</dimen>
+
+    <!-- Review button dimensions -->
+    <dimen name="review_button_padding">2dp</dimen>
 
     <!-- General spacing sizes -->
     <dimen name="view_spacing_vertical_1">32dp</dimen>

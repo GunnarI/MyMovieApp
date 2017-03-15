@@ -41,11 +41,6 @@ import com.squareup.picasso.Target;
  * Created by gunnaringi on 2017-02-02.
  */
 
-// TODO : activity_detail.xml has a field with movie duration but to get this we need to make
-    //      a new call to the api for a specific movie:
-    //      http://api.themoviedb.org/3/movie/movie_id?api_key=my_api_key
-    //      Need to decide wheather we should delete the field or make the call
-
 public class DetailActivity extends AppCompatActivity implements
         TrailerAdapterOnClickHandler {
 
