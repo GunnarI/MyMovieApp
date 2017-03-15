@@ -50,6 +50,7 @@ public class ReviewsActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle("Reviews");
         setContentView(R.layout.activity_reviews);
 
         Intent intentThatStartedThisActivity = getIntent();

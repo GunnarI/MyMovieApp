@@ -1,5 +1,6 @@
 package com.example.android.mymovieapp;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
@@ -13,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -66,6 +68,8 @@ public class DetailActivity extends AppCompatActivity implements
     private RecyclerView mRecyclerView;
     private TextView mErrorMessageDisplay;
     private ProgressBar mLoadingIndicatorForDb;
+
+    private Boolean isStartedForResult;
 
     private static final int TRAILER_LOADER_ID = 1;
     private static final int INSERT_INTO_DATABASE_LOADER_ID = 2;
@@ -165,9 +169,11 @@ public class DetailActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle("Details");
         setContentView(R.layout.activity_detail);
 
         Intent intentThatStartedThisActivity = getIntent();
+        isStartedForResult = (getCallingActivity() != null);
 
         mMovieTitle = (TextView) findViewById(R.id.movie_title);
         mMovieThumbnail = (ImageView) findViewById(R.id.movie_thumbnail);
@@ -189,6 +195,7 @@ public class DetailActivity extends AppCompatActivity implements
 
             if (extras.containsKey(MOVIE_DETAIL_EXTRA)) {
                 mMovieData = extras.getParcelable(MOVIE_DETAIL_EXTRA);
+
                 mMovieData.setIsFavorite(extras.getBoolean(IS_FAVORITE_EXTRA));
 
                 mMovieTitle.setText(mMovieData.getTitle());
@@ -307,11 +314,6 @@ public class DetailActivity extends AppCompatActivity implements
                 final FloatingActionButton mFavButton =
                         (FloatingActionButton) findViewById(R.id.favorite_button);
 
-                LinearLayoutManager layoutManager =
-                        new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-                mRecyclerView.setLayoutManager(layoutManager);
-                mTrailerAdapter = new TrailerAdapter(this);
-
                 if (mMovieData.getIsFavorite()) {
                     if (extras.containsKey(TRAILER_DETAIL_EXTRA)) {
                         ArrayList<TrailerData> mTrailerData
@@ -351,8 +353,6 @@ public class DetailActivity extends AppCompatActivity implements
                     });
 
                     mFavButton.setImageResource(R.drawable.full_star);
-
-                    mTrailerAdapter.setImgStorageDir(mMovieData.getImgStorageDir());
                 } else {
                     Picasso.with(this)
                             .load("http://image.tmdb.org/t/p/w500" + mMovieData.getImgUrl())
@@ -374,6 +374,8 @@ public class DetailActivity extends AppCompatActivity implements
                             startActivityForResult(reviewsIntent, REVIEWS_ACTIVITY_REQUEST_CODE);
                         }
                     });
+
+                    mFavButton.setImageResource(R.drawable.empty_star);
                 }
 
                 mFavButton.setOnClickListener(new View.OnClickListener() {
@@ -392,12 +394,56 @@ public class DetailActivity extends AppCompatActivity implements
                     }
                 });
 
-
+                final LinearLayoutManager layoutManager =
+                        new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+                mRecyclerView.setLayoutManager(layoutManager);
+                mTrailerAdapter = new TrailerAdapter(this);
+                if (mMovieData.getIsFavorite()) {
+                    mTrailerAdapter.setImgStorageDir(mMovieData.getImgStorageDir());
+                }
                 mRecyclerView.setAdapter(mTrailerAdapter);
 
                 loadTrailerData();
             }
         }
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        Boolean isFavorite = savedInstanceState.getBoolean(IS_FAVORITE_EXTRA);
+        if (isFavorite) {
+            mMovieData.setIsFavorite(true);
+            FloatingActionButton mFavButton =
+                    (FloatingActionButton) findViewById(R.id.favorite_button);
+            mFavButton.setImageResource(R.drawable.full_star);
+        } else {
+            mMovieData.setIsFavorite(false);
+            FloatingActionButton mFavButton =
+                    (FloatingActionButton) findViewById(R.id.favorite_button);
+            mFavButton.setImageResource(R.drawable.empty_star);
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean(IS_FAVORITE_EXTRA, mMovieData.getIsFavorite());
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (isStartedForResult) {
+            if (!mMovieData.getIsFavorite()) {
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra("DetailExtra", mMovieData.getId());
+
+                setResult(Activity.RESULT_OK, resultIntent);
+            }
+        }
+
+        this.finish();
+        return true;
     }
 
     @Override
@@ -511,11 +557,6 @@ public class DetailActivity extends AppCompatActivity implements
                     trailerImgDeleted = false;
                 }
             }
-        }
-        if (posterImgDeleted && trailerImgDeleted) {
-            Log.i(LOG_TAG, "Images successfully deleted");
-        } else {
-            Log.i(LOG_TAG, "Images not deleted for some reason");
         }
 
         int loaderId = DELETE_FROM_DATABASE_LOADER_ID;
