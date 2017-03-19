@@ -66,19 +66,15 @@ public class FetchMoviesTask extends AsyncTaskLoader<ArrayList<MovieData>> {
     public ArrayList<MovieData> loadInBackground() {
         if (orderby == "my_favorite") {
             try {
-                FavoriteDbHelper dbHelper = new FavoriteDbHelper(context);
-                mDb = dbHelper.getReadableDatabase();
-                Cursor movieCursor = mDb.query(FavoriteEntry.MOVIE_TABLE_NAME,
-                        null, null, null, null, null,
-                        FavoriteEntry._ID);
-
-                return getmMovieDataFromDatabase(movieCursor);
-            } catch (SQLiteException e) {
+                return getmMovieDataFromDatabase(context.getContentResolver()
+                        .query(FavoriteEntry.MOVIE_CONTENT_URI,
+                                null,
+                                null,
+                                null,
+                                FavoriteEntry._ID)
+                );
+            } catch (Exception e) {
                 Log.e(LOG_TAG, "Error ", e);
-            } finally {
-                if (mDb != null) {
-                    mDb.close();
-                }
             }
 
             return null;

@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
@@ -27,7 +25,6 @@ import java.util.ArrayList;
 import com.example.android.mymovieapp.adapters.PosterAdapter;
 import com.example.android.mymovieapp.adapters.PosterAdapter.PosterAdapterOnClickHandler;
 import com.example.android.mymovieapp.database.FavoriteContract;
-import com.example.android.mymovieapp.database.FavoriteDbHelper;
 import com.example.android.mymovieapp.loaders.FetchMoviesTask;
 
 public class MainActivity extends AppCompatActivity implements
@@ -281,34 +278,35 @@ public class MainActivity extends AppCompatActivity implements
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
         int noOfColumns = (int) (dpWidth / 180);
-        return noOfColumns;
+        return noOfColumns >= 2 ? noOfColumns : 2;
     }
 
     public String checkIfInDb(String movieId) {
-        SQLiteDatabase mDb = null;
         Cursor cursor = null;
 
         try {
-            FavoriteDbHelper dbHelper = new FavoriteDbHelper(this);
-            mDb = dbHelper.getReadableDatabase();
+            String selection = FavoriteContract.FavoriteEntry.COLUMN_MOVIE_ID + "=?";
+            String[] selectionArgs = {movieId};
 
-            String query = "SELECT * FROM " + FavoriteContract.FavoriteEntry.MOVIE_TABLE_NAME +
-                    " WHERE " + FavoriteContract.FavoriteEntry.COLUMN_MOVIE_ID +
-                    " = " + movieId + ";";
-            cursor = mDb.rawQuery(query, null);
+            cursor = getContentResolver().query(FavoriteContract.FavoriteEntry.MOVIE_CONTENT_URI,
+                    null,
+                    selection,
+                    selectionArgs,
+                    FavoriteContract.FavoriteEntry._ID);
+
             if (cursor.getCount() <= 0) {
                 cursor.close();
                 return null;
             }
 
             cursor.moveToFirst();
+
             return cursor.getString(cursor.getColumnIndex(
-                                FavoriteContract.FavoriteEntry.COLUMN_IMAGE_STORAGE_DIR));
-        } catch (SQLiteException e) {
+                    FavoriteContract.FavoriteEntry.COLUMN_IMAGE_STORAGE_DIR));
+        } catch (Exception e) {
             Log.e(LOG_TAG, "Error ", e);
         } finally {
             cursor.close();
-            mDb.close();
         }
 
         return null;

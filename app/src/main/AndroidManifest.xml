@@ -41,6 +41,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.android.mymovieapp.MainActivity" />
         </activity>
+
+        <provider
+            android:authorities="com.example.android.mymovieapp"
+            android:name="com.example.android.mymovieapp.database.FavoritesContentProvider"
+            android:exported="false" />
     </application>
 
 </manifest>
