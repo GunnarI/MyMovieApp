@@ -1,5 +1,6 @@
 package com.example.android.mymovieapp.database;
 
+import android.net.Uri;
 import android.provider.BaseColumns;
 
 /**
@@ -7,7 +8,22 @@ import android.provider.BaseColumns;
  */
 
 public class FavoriteContract {
+
+    public static final String AUTHORITY = "com.example.android.mymovieapp";
+    public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + AUTHORITY);
+    public static final String PATH_MOVIES = "favoriteMovies";
+    public static final String PATH_TRAILERS = "favoriteTrailers";
+    public static final String PATH_REVIEWS = "favoriteReviews";
+
     public static final class FavoriteEntry implements BaseColumns {
+
+        public static final Uri MOVIE_CONTENT_URI = BASE_CONTENT_URI.buildUpon()
+                .appendPath(PATH_MOVIES).build();
+        public static final Uri TRAILER_CONTENT_URI = BASE_CONTENT_URI.buildUpon()
+                .appendPath(PATH_TRAILERS).build();
+        public static final Uri REVIEW_CONTENT_URI = BASE_CONTENT_URI.buildUpon()
+                .appendPath(PATH_REVIEWS).build();
+
         public static final String MOVIE_TABLE_NAME = "favoriteMovies";
         public static final String TRAILER_TABLE_NAME = "favoriteTrailers";
         public static final String REVIEW_TABLE_NAME = "favoriteReviews";

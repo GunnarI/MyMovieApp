@@ -1,9 +1,8 @@
 package com.example.android.mymovieapp.database;
 
-import android.database.sqlite.SQLiteException;
+import android.net.Uri;
 import android.support.v4.content.AsyncTaskLoader;
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -22,8 +21,6 @@ public class DeleteMovieFromDatabase extends AsyncTaskLoader<Boolean> {
     private Boolean mDatabaseResult;
     private ProgressBar mLoadingIndicator;
 
-    private SQLiteDatabase mDb;
-
     public DeleteMovieFromDatabase(Context context, ProgressBar mLoadingIndicator, String movieId) {
         super(context);
         this.context = context;
@@ -40,27 +37,33 @@ public class DeleteMovieFromDatabase extends AsyncTaskLoader<Boolean> {
     @Override
     public Boolean loadInBackground() {
         try {
-            FavoriteDbHelper dbHelper = new FavoriteDbHelper(context);
-            mDb = dbHelper.getWritableDatabase();
+            Uri trailerUri = FavoriteEntry.TRAILER_CONTENT_URI;
+            trailerUri = trailerUri.buildUpon().appendPath(mMovieId).build();
+            int trailersDeleted = context.getContentResolver().delete(trailerUri, null, null);
 
-            mDb.beginTransaction();
-            mDb.delete(FavoriteEntry.TRAILER_TABLE_NAME,
-                    FavoriteEntry.COLUMN_MOVIE_ID + "=" + mMovieId, null);
-            mDb.delete(FavoriteEntry.REVIEW_TABLE_NAME,
-                    FavoriteEntry.COLUMN_MOVIE_ID + "=" + mMovieId, null);
-            int rowsDeleted = mDb.delete(FavoriteEntry.MOVIE_TABLE_NAME,
-                    FavoriteEntry.COLUMN_MOVIE_ID + "=" + mMovieId, null);
-            if (rowsDeleted > 0) {
-                mDb.setTransactionSuccessful();
+            Uri reviewUri = FavoriteEntry.REVIEW_CONTENT_URI;
+            reviewUri = reviewUri.buildUpon().appendPath(mMovieId).build();
+            int reviewsDeleted = context.getContentResolver().delete(reviewUri, null, null);
+
+            Uri movieUri = FavoriteEntry.MOVIE_CONTENT_URI;
+            movieUri = movieUri.buildUpon().appendPath(mMovieId).build();
+            int moviesDeleted = context.getContentResolver().delete(movieUri, null, null);
+
+            if (moviesDeleted > 0) {
+                if (trailersDeleted == 0) {
+                    Log.w(LOG_TAG, "No trailers deleted with movie id " + mMovieId);
+                }
+                if (reviewsDeleted == 0) {
+                    Log.w(LOG_TAG, "No reviews deleted with movie id " + mMovieId);
+                }
                 return true;
             }
+
             return false;
-        } catch (SQLiteException e) {
+        } catch (Exception e) {
             Log.e(LOG_TAG, "Error ", e);
-        } finally {
-            mDb.endTransaction();
-            mDb.close();
         }
+
         return null;
     }
 

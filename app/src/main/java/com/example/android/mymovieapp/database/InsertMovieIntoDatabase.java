@@ -1,8 +1,6 @@
 package com.example.android.mymovieapp.database;
 
 import android.content.ContentValues;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.support.v4.content.AsyncTaskLoader;
 import android.content.Context;
@@ -39,8 +37,6 @@ public class InsertMovieIntoDatabase extends AsyncTaskLoader<Boolean> {
     private MovieData mMovieData;
     private Boolean mDatabaseResult;
     private ProgressBar mLoadingIndicator;
-
-    private SQLiteDatabase mDb;
 
     public InsertMovieIntoDatabase(Context context,
                                    ProgressBar mLoadingIndicator, MovieData movieData) {
@@ -122,11 +118,6 @@ public class InsertMovieIntoDatabase extends AsyncTaskLoader<Boolean> {
         }
 
         try {
-            FavoriteDbHelper dbHelper = new FavoriteDbHelper(context);
-            mDb = dbHelper.getWritableDatabase();
-
-            mDb.beginTransaction();
-
             ContentValues movieDataToInsert = new ContentValues();
             movieDataToInsert.put(FavoriteEntry.COLUMN_MOVIE_ID, mMovieData.getId());
             movieDataToInsert.put(FavoriteEntry.COLUMN_IMAGE_STORAGE_DIR,
@@ -137,8 +128,10 @@ public class InsertMovieIntoDatabase extends AsyncTaskLoader<Boolean> {
             movieDataToInsert.put(FavoriteEntry.COLUMN_MOVIE_RATING, mMovieData.getRating());
             movieDataToInsert.put(FavoriteEntry.COLUMN_MOVIE_RELEASE_DATE, mMovieData.getRelDate());
 
-            mDb.insert(FavoriteEntry.MOVIE_TABLE_NAME, null, movieDataToInsert);
+            Uri movieUri = context.getContentResolver()
+                    .insert(FavoriteEntry.MOVIE_CONTENT_URI, movieDataToInsert);
 
+            Uri trailerUri = null;
             ArrayList<TrailerData> mTrailerData = mMovieData.getTrailers();
             if (mTrailerData != null) {
                 for(int i = 0; i < mTrailerData.size(); i++) {
@@ -151,10 +144,12 @@ public class InsertMovieIntoDatabase extends AsyncTaskLoader<Boolean> {
                     trailerDataToInsert.put(FavoriteEntry.COLUMN_MOVIE_TRAILER_TYPE,
                             mTrailerData.get(i).getTrailerType());
 
-                    mDb.insert(FavoriteEntry.TRAILER_TABLE_NAME, null, trailerDataToInsert);
+                    trailerUri = context.getContentResolver()
+                            .insert(FavoriteEntry.TRAILER_CONTENT_URI, trailerDataToInsert);
                 }
             }
 
+            Uri reviewUri = null;
             ArrayList<ReviewData> mReviewData = mMovieData.getReviews();
             if (mTrailerData != null) {
                 for(int j = 0; j < mReviewData.size(); j++) {
@@ -165,17 +160,17 @@ public class InsertMovieIntoDatabase extends AsyncTaskLoader<Boolean> {
                     reviewDataToInsert.put(FavoriteEntry.COLUMN_MOVIE_REVIEW_CONTENT,
                             mReviewData.get(j).getReviewContent());
 
-                    mDb.insert(FavoriteEntry.REVIEW_TABLE_NAME, null, reviewDataToInsert);
+                    reviewUri = context.getContentResolver()
+                            .insert(FavoriteEntry.REVIEW_CONTENT_URI, reviewDataToInsert);
                 }
             }
 
-            mDb.setTransactionSuccessful();
-            return true;
-        } catch (SQLiteException e) {
+            if (movieUri != null && trailerUri != null && reviewUri != null) {
+                return true;
+            }
+
+        } catch (Exception e) {
             Log.e(LOG_TAG, "Error ", e);
-        } finally {
-            mDb.endTransaction();
-            mDb.close();
         }
 
         return false;
