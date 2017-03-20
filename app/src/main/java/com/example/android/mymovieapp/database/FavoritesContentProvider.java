@@ -164,7 +164,6 @@ public class FavoritesContentProvider extends ContentProvider {
         return itemsDeleted;
     }
 
-    @Nullable
     @Override
     public String getType(@NonNull Uri uri) {
         return null;

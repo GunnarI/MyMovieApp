@@ -97,6 +97,8 @@ public class FetchMoviesTask extends AsyncTaskLoader<ArrayList<MovieData>> {
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
                 urlConnection.connect();
+                urlConnection.setConnectTimeout(5000);
+                urlConnection.setReadTimeout(10000);
 
                 InputStream inputStream = urlConnection.getInputStream();
                 StringBuffer buffer = new StringBuffer();
